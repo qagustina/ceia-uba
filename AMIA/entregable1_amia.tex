@@ -1,0 +1,249 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\title{\bf Análisis Matemático para Inteligencia Artificial (CEIA-AMIA)}
+\author{Agustina Quiros}     
+
+\begin{document}
+\maketitle
+
+{\bfseries Guía 1. Ejercicio 7.} 
+
+Mostrar que 
+\[
+\langle A, B \rangle = \text{Tr}(AB^H)
+\]
+define un producto interno en $(C)^{n \times m}$. A este p.i. se lo conoce como producto
+interno de Frobenius. (La operación $A^H$ representa A transpuesta y conjugada). \\
+
+{\bfseries Espacios con Producto Interno: Definición.} 
+Sea \( V \) un espacio vectorial sobre \( K \), donde \( K = \mathbb{R} \) o \( \mathbb{C} \). Un producto interno sobre \( V \) es una función \(\Phi : V \times V \to \mathbb{R} \) (o \(\mathbb{C}\)) que satisface:
+
+1. Para cada \(\alpha \in \mathbb{R}\) (o \(\mathbb{C}\)), \( u, v, w \in V \):
+\[
+\Phi(u + v, w) = \Phi(u, w) + \Phi(v, w)
+\]
+\[
+\Phi(\alpha \cdot u, v) = \alpha \cdot \Phi(u, v)
+\]
+
+2. 
+\[
+\Phi(u, v) = \overline{\Phi(v, u)}
+\]
+
+3. 
+
+\[
+\Phi(v, v) \geq 0,\Phi(v, v) = 0 \quad \text{sii} \quad v = 0
+\]
+
+
+\textit{Demostración}
+
+\textbf{1. a.}
+
+\[
+    \langle A + B, C \rangle = \langle A, C \rangle + \langle B, C \rangle
+\]
+
+\[
+\begin{array}{rcl}
+\langle A + B, C \rangle & = & \text{Tr}[(A + B)C^H] \\
+                         &   & \quad (\text{1}) \\
+                         & = & \text{Tr}(AC^H + BC^H) \\
+                         &   & \quad (\text{2}) \\
+                         & = & \text{Tr}(AC^H) + \text{Tr}(BC^H) \\
+                         &   & \quad (\text{3}) \\
+                         & = & \langle A, C \rangle + \langle B, C \rangle
+\end{array}
+\]
+\begin{enumerate}
+    \item Por definición del producto interno de Frobenius y propiedad de la traza de una matriz.
+    \item Por la propiedad distributiva de las matrices.
+    \item Por propiedad de la traza de una matriz que establece que la traza de una suma es igual a la suma de las trazas.
+\end{enumerate}
+
+
+\textbf{1. b.}
+\[
+\langle \alpha A, B \rangle = \alpha \langle A, B \rangle
+\]
+
+\[
+\begin{array}{rcl}
+\langle \alpha A, B \rangle & = & \text{Tr}[(\alpha A) B^H] \\
+                            &   & \quad (\text{1}) \\
+                            & = & \text{Tr}[\alpha (A B^H)] \\
+                            &   & \quad (\text{2}) \\
+                            & = & \alpha \text{Tr}(A B^H) \\
+                            &   & \quad (\text{3}) \\
+                            & = &  \alpha \langle A, B \rangle
+\end{array}
+\]
+
+\begin{enumerate}
+    \item Por definición del producto interno de Frobenius.
+    \item Por propiedad lineal de la traza de una matriz.
+    \item Por la propiedad de la traza de una matriz respecto a un escalar. 
+\end{enumerate}
+
+\textbf{2.}
+\[
+\langle A, B \rangle = \overline{\langle B, A \rangle}
+\]
+
+\[
+\begin{array}{rcl}
+\overline{\langle B, A \rangle} & = & \overline{\text{Tr}\langle  BA^H \rangle} \\
+                         &   & \quad (\text{1}) \\
+                         & = & \text{Tr}((AB^H)^H) \\
+                         &   & \quad (\text{2}) \\
+                         & = & \text{Tr}(AB^H) \\
+                         &   & \quad (\text{3}) \\
+                         & = & \langle A, B \rangle
+\end{array}
+\]
+
+\begin{enumerate}
+    \item Por propiedad de la traza de una matriz y propiedad de matriz transpuesta conjugada.
+    \item Por propiedad de la matriz conjugada traspuesta de inversión de la multiplicación.
+    \item Por propiedad involutiva de la matriz adjunta.
+\end{enumerate}
+
+Ejemplo. Sean \( A, B \) matrices complejas de tamaño \( nxn \):
+
+\[
+A = \begin{pmatrix}
+1 + i & 2 - i \\
+-i & 3
+\end{pmatrix}
+B = \begin{pmatrix}
+    2  & 1 + 2i \\
+    i & -1
+    \end{pmatrix}
+\]  
+    
+\[
+AB^H = 
+\begin{pmatrix}
+1 + i & 2 - i \\
+-i & 3
+\end{pmatrix}
+\begin{pmatrix}
+2 & -i \\
+1-2i & -1
+\end{pmatrix}
+\]
+        
+\[
+AB^H = \begin{pmatrix}
+(1+i)\cdot 2 + (2-i)\cdot (1-2i) & (1+i)\cdot(-i) + (2-i)\cdot(-1) \\
+(-i)\cdot 2 + 3\cdot (1-2i) & (-i)\cdot (-i) + 3\cdot (-1)
+\end{pmatrix}
+\]
+
+\[
+Tr(AB^H) = (1+i)\cdot 2 + (2-i)\cdot (1-2i) + (-i)\cdot (-i) + 3\cdot (-1)
+\]
+
+Luego,
+\[
+BA^H = 
+\begin{pmatrix}
+    2  & 1 + 2i \\
+    i & -1
+    \end{pmatrix}
+\begin{pmatrix}
+    1-i  & i \\
+    2+i & 3
+    \end{pmatrix}    
+\]
+
+\[
+BA^H = 
+\begin{pmatrix}
+    2 \cdot (1 - i) + (1 + 2i) \cdot (2 + i) & 2 \cdot i + (1 + 2i) \cdot 3 \\
+    i \cdot (1 - i) + (-1) \cdot (2 + i) & i \cdot i + (-1) \cdot 3
+\end{pmatrix}
+\]
+
+\[
+Tr(BA^H) = 2\cdot (1-i) + (1+2i)\cdot (2+i) + i\cdot i + (-1) \cdot (-3)
+\]
+
+Queda demostrado que: 
+\[
+    Tr(AB^H) = \overline{Tr(BA^H)}
+\]
+
+\textbf{3.}
+
+\[
+\langle A, A \rangle \geq 0
+\]
+
+\[
+\langle A, A \rangle  =  \text{Tr}(A A^H) \geq 0 
+\]
+
+Dado que \(A A^H\) es una matriz hermitiana y semidefinida positiva (todos sus valores propios son no negativos), la traza de una matriz hermitiana semidefinida positiva es siempre no negativa.
+
+Por lo tanto:
+
+\[
+\text{Tr}(A A^H) \geq 0
+\]
+
+Además, \(\text{Tr}(A A^H) = 0\) si y solo si \(A A^H = 0\), lo cual sucede si y solo si \(A = 0\).
+
+Por lo tanto:
+
+\[
+\langle A, A \rangle = 0 \quad \text{si y solo si} \quad A = 0
+\]
+
+Ejemplo. Sea \( A \) una matriz compleja de tamaño \( nxn \):
+
+\[
+A = \begin{pmatrix}
+1 + i & 2 \\
+3i & -1
+\end{pmatrix}
+\]
+
+La matriz conjugada transpuesta \( A^H \) es:
+
+\[
+A^H = \begin{pmatrix}
+1 - i & -3i \\
+2 & -1
+\end{pmatrix}
+\]
+
+\[
+A A^H = \begin{pmatrix}
+1 + i & 2 \\
+3i & -1
+\end{pmatrix}
+\begin{pmatrix}
+1 - i & -3i \\
+2 & -1
+\end{pmatrix}
+\]
+
+\[
+A A^H = \begin{pmatrix}
+(1+i)(1-i) + 2 \cdot 2 & (1+i)(-3i) + 2 \cdot (-1) \\
+3i(1-i) + (-1)(2) & 3i(-3i) + (-1)(-1)
+\end{pmatrix}
+\]
+
+\[
+\text{Tr}(A A^H) = (1+i)(1-i) + 2 \cdot 2 + 3i \cdot (-3i) + (-1) \cdot (-1) \geq 0
+\]
+
+
+Queda demostrado que: \[\text{Tr}(A A^H) \geq 0.\]
+
+\end{document}
