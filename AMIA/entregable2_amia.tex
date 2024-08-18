@@ -1,0 +1,469 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\title{\bf Análisis Matemático para Inteligencia Artificial (CEIA-AMIA)}
+\author{Agustina Quiros}     
+
+\begin{document}
+\maketitle
+
+{\bfseries Guía 2. Ejercicio 5.} 
+
+El objetivo es que la relación recursiva de la secuencia de Fibonacci se pueda expresar de la forma matricial:
+\[
+\mathbf{x}^{(k)} = A \mathbf{x}^{(k-1)}
+\]
+
+Tenemos que:
+\[
+\mathbf{x}^{(0)} = \begin{bmatrix}
+1 \\
+0
+\end{bmatrix}
+\quad
+\mathbf{x}^{(k)} = \begin{bmatrix}
+f_{k+1} \\
+f_k
+\end{bmatrix}
+\quad
+\mathbf{x}^{(k-1)} = \begin{bmatrix}
+f_k \\
+f_{k-1}
+\end{bmatrix}
+\]
+
+La matriz \( A \) es:
+\[
+A = \begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}
+\]
+
+Multiplicamos la matriz \( A \) por el vector \(\mathbf{x}^{(k-1)}\):
+\[
+A \cdot \mathbf{x}^{(k-1)}
+=
+\begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+f_k \\
+f_{k-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+a f_k + b f_{k-1} \\
+c f_k + d f_{k-1}
+\end{bmatrix}
+\]
+
+Queremos igualar la siguiente expresión:
+\[
+\begin{bmatrix}
+f_k + f_{k-1} \\
+f_k
+\end{bmatrix}
+\]
+Igualando:
+\[
+a f_k + b f_{k-1} = f_k + f_{k-1}
+\]
+\[
+c f_k + d f_{k-1} = f_k
+\]
+
+
+1.  Coeficiente de \( f_k \) : \( a = 1 \) y \( f_{k-1} \): \( b = 1 \)
+
+2.  Coeficiente de \( f_k \) : \( c = 1 \) y \( f_{k-1} \) : \( d = 0 \)
+
+Entonces, la matriz \( A \) queda:
+\[
+A = \begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+\]
+
+Multiplicamos \( A \) por el vector \(\mathbf{x}^{(k-1)}\):
+\[
+A \cdot \begin{bmatrix}
+f_k \\
+f_{k-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+f_k \\
+f_{k-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \cdot f_k + 1 \cdot f_{k-1} \\
+1 \cdot f_k + 0 \cdot f_{k-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+f_k + f_{k-1} \\
+f_k
+\end{bmatrix}
+\]
+
+Y esto es igual a:
+\[
+\begin{bmatrix}
+f_{k+1} \\
+f_k
+\end{bmatrix}
+\]
+
+La relación de las variables de forma matricial es:
+\[
+\mathbf{x}^{(k)} = A^k \cdot \mathbf{x}^{(0)}
+\]
+donde:
+\[
+A = \begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+\]
+y
+\[
+\mathbf{x}^{(0)} = \begin{bmatrix}
+1 \\
+0
+\end{bmatrix}
+\]
+
+Esta matriz \( A \) permite expresar la relación recursiva de la secuencia de Fibonacci en forma matricial.
+
+
+\section*{Autovalores}
+
+Sea \( A \) la matriz
+\[
+A = \begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+\]
+
+La función característica \( p(\lambda) \) se define como
+\[
+p(\lambda) = \det (A - \lambda I)
+\]
+
+\[
+A - \lambda I = \begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix} - \lambda \begin{bmatrix}
+1 & 0 \\
+0 & 1
+\end{bmatrix} = \begin{bmatrix}
+1 - \lambda & 1 \\
+1 & -\lambda
+\end{bmatrix}
+\]
+
+Determinante
+\[
+\det \begin{bmatrix}
+1 - \lambda & 1 \\
+1 & -\lambda
+\end{bmatrix} = (1 - \lambda)(-\lambda) - (1 \cdot 1) = -\lambda^2 - \lambda - 1 
+\]
+Resolviendo:
+\[
+\lambda^2 - \lambda - 1 = 0
+\]
+Utilizando la fórmula resolvente
+\[
+\lambda = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]
+donde \( a = -1 \), \( b = -1 \), y \( c = -1 \)
+
+Las soluciones son
+\[
+\lambda_1 = \frac{1 + \sqrt{5}}{2}
+\]
+\[
+\lambda_2 = \frac{1 - \sqrt{5}}{2}
+\]
+
+\begin{enumerate}
+    \item Multiplicidad algebraica de \( \lambda_1 \) = 1.
+    \item Multiplicidad algebraica de \( \lambda_2 \) = 1.
+\end{enumerate}
+
+\section*{Autovectores}
+
+\[
+(A - \lambda I)x = 0
+\]
+
+\[
+A - \lambda_1 I = \begin{bmatrix}
+1 - \frac{1 + \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 + \sqrt{5}}{2}
+\end{bmatrix}
+\]
+Simplificando
+\[
+\begin{bmatrix}
+\frac{1 - \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 + \sqrt{5}}{2}
+\end{bmatrix}
+\]
+
+\[
+\begin{bmatrix}
+\frac{1 - \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 + \sqrt{5}}{2}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 \\
+v_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\]
+
+Sistema de ecuaciones:
+\[
+\left\{
+\begin{array}{l}
+\frac{1 - \sqrt{5}}{2} v_1 + v_2 = 0 \\
+v_1 - \frac{1 + \sqrt{5}}{2} v_2 = 0
+\end{array}
+\right.
+\]
+
+Tomando \( v_1 = 1 \)
+
+- Autovector de \( \lambda_1 \):
+\[
+ \lambda_1 =
+\begin{bmatrix}
+1 \\
+-\frac{1 + \sqrt{5}}{2}
+\end{bmatrix}
+\]
+
+Para \( \lambda_2 = \frac{1 - \sqrt{5}}{2} \):
+\[
+A - \lambda_2 I = \begin{bmatrix}
+1 - \frac{1 - \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 - \sqrt{5}}{2}
+\end{bmatrix}
+\]
+Simplificando
+\[
+A - \lambda_2 I = \begin{bmatrix}
+\frac{1 + \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 - \sqrt{5}}{2}
+\end{bmatrix}
+\]
+
+Luego
+\[
+\begin{bmatrix}
+\frac{1 + \sqrt{5}}{2} & 1 \\
+1 & -\frac{1 - \sqrt{5}}{2}
+\end{bmatrix}
+\begin{bmatrix}
+v_1 \\
+v_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\]
+
+Sistema de ecuaciones:
+\[
+\left\{
+\begin{array}{l}
+\frac{1 + \sqrt{5}}{2} v_1 + v_2 = 0 \\
+v_1 - \frac{1 + \sqrt{5}}{2} v_2 = 0
+\end{array}
+\right.
+\]
+
+- Autovector de \( \lambda_2 \):
+\[
+\lambda_2 =
+\begin{bmatrix}
+1 \\
+-\frac{1 + \sqrt{5}}{2}
+\end{bmatrix}
+\]
+
+\begin{enumerate}
+    \item Multiplicidad geometrica de \( \lambda_1 \) = 1.
+    \item Multiplicidad geometrica de \( \lambda_2 \) = 1.
+\end{enumerate}
+
+{\bfseries Dado que para todos los autovalores la multiplicidad algebraica coincide con la geométrica, la matriz $A$ es diagonizable.} 
+
+
+\section*{Diagonalización de la Matriz $A$}
+
+Dada la matriz
+\[
+A = \begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix},
+\]
+
+La matriz de autovectores \(S\) se forma colocando los autovectores como columa:
+\[
+S = \begin{bmatrix}
+1 & 1 \\
+\frac{\sqrt{5} - 1}{2} & -\frac{1 + \sqrt{5}}{2}
+\end{bmatrix},
+\]
+
+
+La matriz \(D\) se forma colocando los autovalores en la diagonal:
+
+\[
+D = \begin{bmatrix}
+\frac{1 + \sqrt{5}}{2} & 0 \\
+0 & \frac{1 - \sqrt{5}}{2}
+\end{bmatrix}.
+\]
+
+La inversa de \(S\):
+
+El determinante de \( S \) se calcula como:
+\[
+\det(S) = \begin{vmatrix}
+1 & 1 \\
+\frac{\sqrt{5} - 1}{2} & -\frac{1 + \sqrt{5}}{2}
+\end{vmatrix}
+\]
+
+\[
+\det(S) = 1 \cdot \left(-\frac{1 + \sqrt{5}}{2}\right) - 1 \cdot \left(\frac{\sqrt{5} - 1}{2}\right)
+\]
+
+\[
+\det(S) = -\frac{1 + \sqrt{5}}{2} - \frac{\sqrt{5} - 1}{2}
+\]
+
+\[
+\det(S) = -\frac{1 + \sqrt{5} + \sqrt{5} - 1}{2}
+\]
+
+\[
+\det(S) = -\frac{2\sqrt{5}}{2} = -\sqrt{5}
+\]
+
+
+La matriz adjunta \(\text{adj}(S)\) 
+
+\[
+\text{adj}(S) = \begin{bmatrix}
+-\frac{1 + \sqrt{5}}{2} & -1 \\
+-\frac{\sqrt{5} - 1}{2} & 1
+\end{bmatrix}.
+\]
+
+Entonces, la diagonalización de la matriz \(A\) se expresa como:
+\[
+A = S D S^{-1}.
+\]
+
+Donde:
+\[
+S = \begin{bmatrix}
+1 & 1 \\
+\frac{\sqrt{5} - 1}{2} & -\frac{1 + \sqrt{5}}{2}
+\end{bmatrix},
+\]
+\[
+D = \begin{bmatrix}
+\frac{1 + \sqrt{5}}{2} & 0 \\
+0 & \frac{1 - \sqrt{5}}{2}
+\end{bmatrix},
+\]
+\[
+S^{-1} = \frac{1}{\sqrt{5}} \begin{bmatrix}
+\frac{1 + \sqrt{5}}{2} & 1 \\
+\frac{\sqrt{5} - 1}{2} & -1
+\end{bmatrix}.
+\]
+
+
+\subsection*{Fórmula explícita para el \( k \)-ésimo elemento de la serie de Fibonacci}
+
+Dada la matriz $A$ y utilizando la diagonalización obtenida anteriormente, podemos hacer:
+
+
+{\bfseries Potencias de la Matriz Diagonal} 
+
+Elevamos \( A \) a la potencia \( k \):
+\[
+A^k = (S D S^{-1})^k = S D^k S^{-1}.
+\]
+La matriz diagonal \( D \) tiene la forma:
+\[
+D = \begin{bmatrix}
+\lambda_1 & 0 \\
+0 & \lambda_2
+\end{bmatrix},
+\]
+donde \(\lambda_1\) y \(\lambda_2\) son los autovalores de \( A \). La matriz \( D^k \) se calcula como:
+\[
+D^k = \begin{bmatrix}
+\lambda_1^k & 0 \\
+0 & \lambda_2^k
+\end{bmatrix}.
+\]
+
+{\bfseries Expresión para \( x(k) \)} 
+
+El vector \( x(k) \) se expresa como:
+\[
+x(k) = A^k x(0),
+\]
+donde \( x(0) \) es el vector inicial dado por:
+\[
+x(0) = \begin{bmatrix}
+f_1 \\
+f_0
+\end{bmatrix} = \begin{bmatrix}
+1 \\
+0
+\end{bmatrix}.
+\]
+
+{\bfseries Fórmula Explícita} 
+
+Sustituimos la expresión de \( A^k \) en \( x(k) \):
+\[
+x(k) = S D^k S^{-1} x(0).
+\]
+
+El resultado de esta operación nos proporciona los términos \( f_{k+1} \) y \( f_k \). De esta manera, obtenemos una fórmula explícita para \( f_k \). La fórmula de Binet, que resulta de este proceso, es:
+\[
+f_k = \frac{(1 + \sqrt{5})^k - (1 - \sqrt{5})^k}{2^k \sqrt{5}}.
+\]
+
+
+\end{document}
