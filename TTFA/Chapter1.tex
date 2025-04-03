@@ -1,0 +1,153 @@
+% Chapter 1
+
+\chapter{Introducción general} % Main chapter title
+
+\label{Chapter1} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+\label{IntroGeneral}
+
+En este capítulo se introduce la problemática y se interpreta la importancia que
+implica el trabajo. Luego, se realiza un análisis del estado de arte sobre la ges-
+tión eficiente de salud de cultivos y se puntualizan los objetivos y el alcance del
+trabajo.
+
+%----------------------------------------------------------------------------------------
+
+% Define some commands to keep the formatting separated from the content 
+\newcommand{\keyword}[1]{\textbf{#1}}
+\newcommand{\tabhead}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{\bfseries#1}}
+\newcommand{\option}[1]{\texttt{\itshape#1}}
+\newcommand{\grados}{$^{\circ}$}
+
+%----------------------------------------------------------------------------------------
+
+%\section{Introducción}
+
+%----------------------------------------------------------------------------------------
+\section{Contexto del trabajo}
+
+En la EEA San Pedro de INTA se busca intensificar de manera sustentable la producción
+de frutales, hortalizas y viveros. Actualmente, la inspección y evaluación
+dependen de visitas de campo y observaciones manuales, procesos costosos, laboriosos
+ y con alcance limitado. Además, el cambio climático y la variabilidad
+meteorológica añaden capas adicionales de complejidad la gestión agronómica.
+
+El Laboratorio de Biotecnología cuenta con datos históricos sobre las etapas de
+floración y maduración de frutos en durazneros. En este contexto, las imágenes
+satelitales se presentan como una herramienta poderosa, ya que ofrecen datos
+consistentes y de amplia cobertura, permitiendo evaluar la vegetación de forma
+precisa y objetiva mediante índices especializados.
+
+La intención de este trabajo es automatizar la gestión de montes frutales mediante el 
+uso de datos disponibles e índices obtenidos de imágenes satelitales. Para lograr este
+objetivo, se hará uso de métodos de aprendizaje automático, aprendizaje profundo y 
+técnicas de preprocesamiento de datos. Se propone una herramienta accesible para los 
+usuarios, que optimiza los resultados y reduce el tiempo y esfuerzo requeridos.
+
+
+\section{Estado del arte}
+
+La recopilación de grandes cantidades de datos agrícolas ayuda a mejorar la toma
+de decisiones para enriquecer la salud de los cultivos. Al mismo tiempo, el
+aprendizaje profundo ha experimentado una gran popularidad en muchas áreas
+de investigación y en diferentes modalidades de datos. Las imágenes por satélite
+están disponibles en cantidades sin precedentes, lo que ha impulsado la investigación
+en el ámbito de la teledetección. La naturaleza ávida de datos de los
+modelos de aprendizaje profundo y este enorme volumen de datos resultan una
+combinación perfecta.
+
+\subsection{Seguimiento de floración mediante teledetección}
+En la tabla \ref{tab:plataformas} se presentan plataformas de teledetección disponibles y requisitos sugeridos 
+(*marginal, **óptimo) para supervisar la fenología de la floración forestal\citep{Dixon2023}.
+
+
+\begin{table}[h]
+	\centering
+	\caption{Plataformas de teledetección disponibles.}
+	\begin{tabular}{l c c c c}    
+		\toprule
+		\textbf{Sensor} & \textbf{Resolución} & \textbf{Frecuencia} & \textbf{Extensión} & \textbf{Coste} \\
+		\midrule
+		PlanetScope & 3m*  & Diariamente**  & Regional** & Moderado* \\		
+		Sentinel-2	 & 10 - 20 m  & 5 días  & Continental**   & Bajo**  \\
+		Landsat	 & 30 m  & 16 días  & Continental** & Bajo** \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:plataformas}
+\end{table}
+
+
+
+\subsection{Aprendizaje automático para pronóstico}
+
+\begin{itemize}
+  \item ARIMA \citep{Siami-Namini2018}: es un modelo de series temporales que combina autoregresión,
+   diferenciación y media móvil para analizar y predecir datos no estacionarios. Ha demostrado 
+   su superioridad en precisión y exactitud a la hora de predecir los próximos intervalos de 
+   las series temporales.
+   \item MLP \citep{Feng2020}: es un algoritmo de aprendizaje supervisado que aprende una función no lineal para
+   problemas de clasficiación o regresión. Este modelo ha demostrado un buen rendimiento en 
+   pronóstico.
+  \item RNN \citep{Sebaa2020}: los datos de entrada de esta arquitectura son datos pasados
+   y actuales, están diseñadas específicamente para tratar datos secuenciales, como secuencias de 
+   palabras en problemas relacionados con la traducción automática, datos de audio en el 
+   reconocimiento del habla o series temporales en problemas de pronóstico.
+  \item LSTM \citep{Siami-Namini2018}: es un tipo de red neuronal Red Neuronal Recurrente (RNN) con la capacidad de
+   de recordar los valores de etapas anteriores para predicción de la siguiente secuencia.
+  \item SVR \citep{Makridakis2018}: es un proceso de regresión realizado por una máquina de vectores soporte que intenta
+   identificar el hiperplano que maximiza el margen entre dos clases y minimiza el error total bajo 
+   tolerancia. Se introduce una penalización de complejidad que equilibra el nivel de precisión en 
+   pronósticos.
+  \item Random Forest Regressor \citep{Nyemeche2023}: es un algoritmo que utiliza múltiples árboles de decisión para
+  encontrar la salida del conjunto de datos de entrenamiento, ha demostrado dar buenos resultados en pronóstico.
+  \end{itemize}
+
+\subsection{Comparación de técnicas}
+
+En la tabla \ref{tab:rmse} se muestra una comparación del RMSE (Error cuadrático medio) que se realizó
+con datos de series temporales. Los valores de RMSE indican que los modelos basados en LSTM superan a los 
+basados en ARIMA con un margen elevado \citep{Siami-Namini2018}.
+
+\begin{table}[h]
+	\centering
+	\caption{Los RMSE de los modelos ARIMA y LSTM.}
+	\begin{tabular}{l c c c}    
+		\toprule
+		\textbf{Metric} & \textbf{ARIMA} & \textbf{LSTM} & \textbf{\% Reducción en RMSE} \\
+		\midrule
+		RMSE Avg & 511.481  & 64.213  & -87.445 \\		
+		\bottomrule
+	\end{tabular}
+	\label{tab:rmse}
+\end{table}
+
+\section{Alcance y Objetivos}
+El objetivo principal del trabajo consistió en desarrollar un algoritmo que permita descargar y analizar 
+imágenes satelitales para vincularlas con características específicas de durazneros. Específicamente, 
+determinar, a partir de los datos disponibles, el progreso de las etapas de floración y maduración de 
+los frutos en el árbol.
+
+\subsection{Alcance del proyecto}
+A continuación, se detallan las actividades incluidas en este trabajo:
+
+\begin{itemize}
+  \item Evaluación de las diferentes fuentes de datos disponibles:
+  \begin{itemize}
+    \item Datos tabulares, que corresponden a mediciones de campo
+    de las etapas de floración y maduración de frutos, obtenidos durante 5
+    años.
+    \item Imágenes satelitales, correspondientes a los lotes de durazneros.
+    \end{itemize}
+  \item La determinación del progreso de las etapas de floración y maduración de
+  los frutos en el duraznero.
+  \item El desarrollo de una herramienta de fácil acceso para el equipo del cliente.
+  \item La elaboración de un informe que detalle el procedimiento realizado y los resultados obtenidos.  
+  \end{itemize}
+
+  Los siguientes elementos quedan fuera del alcance:
+  \begin{itemize}
+    \item El desarrollo de una interfaz web para el sistema.
+    \item El despligue del desarrollo en producción.
+    \end{itemize}
+
