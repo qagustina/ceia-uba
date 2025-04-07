@@ -1,0 +1,203 @@
+\chapter{Diseño e implementación} % Main chapter title
+
+\label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+
+En este capítulo se describe la problemática planteada, seguidamente se describe el enfoque 
+utilizado para resolver el problema, detallando las estrategias adoptadas. Luego, se expone 
+un análisis exploratorio inicial de los datos y el proceso de descarga de imágenes satelitales. 
+Finalmente, se presentan los modelos de aprendizaje automático utilizados, junto con el proceso 
+de desarrollo de los scripts para su implementación.
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% parámetros para configurar el formato del código en los entornos lstlisting
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  %escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  %extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  %frame=single,	                % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=[ANSI]C,                % the language of the code
+  %otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname,                  % show the filename of files included with \lstinputlisting; also try caption instead of title
+  morecomment=[s]{/*}{*/}
+}
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+\section{Enfoque para resolver el problema}
+
+El Laboratorio de Biotecnología recopiló datos sobre las fechas de floración de durazneros
+y las ubicaciones de las parcelas durante un período de cinco años. Con base en esta 
+información, se evaluó la viabilidad de descargar imágenes satelitales correspondientes
+a dichas parcelas en las fechas de floración, con el propósito de calcular índices de
+vegetación y mejorar la precisión en las predicciones.
+
+El proceso del trabajo se compone en: 
+
+\begin{enumerate}
+  \item Adquisición y preprocesamiento de datos
+      \begin{itemize}
+        \item Integración y limpieza de datos crudos: fechas de floración y ubicaciones de parcelas.
+      \end{itemize}
+  \item Obtención y procesamiento de imágenes satelitales
+      \begin{itemize}
+        \item Desarrollo de un script en Python para interactuar con la API de Google Earth Engine.
+        \item Descarga de imágenes satelitales correspondientes a las parcelas en sus respectivas fechas de floración.
+        \item Lectura y procesamiento de los archivos .TIFF para extraer índices de vegetación.
+      \end{itemize}
+  \item Construcción del dataset
+      \begin{itemize}
+        \item Confección de un nuevo conjunto de datos enriquecido con índices de vegetación.
+        \item Estructuración y limpieza del dataset final.
+      \end{itemize}
+  \item  Modelado y entrenamiento
+      \begin{itemize}
+        \item Preprocesamiento de datos.
+        \item Entrenamiento de modelos.
+      \end{itemize}
+  \item Evaluación y ajuste del modelo
+      \begin{itemize}
+        \item Cálculo de métricas de desempeño del modelo.
+        \item Validación de resultados. Retroalimentación para mejora, y reentrenamiento de modelo.
+      \end{itemize}
+	\end{enumerate}
+
+\section{Análisis exploratorio inicial}
+
+Inicialmente, se procedió a la extracción de los registros de floración correspondientes 
+a todas las parcelas en un lapso de 5 años. Una representación parcial de la 
+estructura de dichos datos se observa en la tabla \ref{tab:firstdataset}.
+
+	\begin{table}[h]
+		\centering
+		\caption{Estructura de datos de floración.}
+		\begin{tabular}{l c c c c c}    
+			\toprule
+			\textbf{Número} & \textbf{ID} & \textbf{Dias-floracion-17} & \textbf{...} & \textbf{Dias-floracion-23} \\
+			\midrule
+			0 & clv2 & 67 & ... & 65 \\		
+			1 & clv3 & NaN & ... & 31 \\
+			2 & clv5 & 73 & ... & 68 \\
+      ... & ... & ... & ... & ... \\
+      184 & htv10 & 30 & ... & 73 \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:firstdataset}
+	\end{table}
+
+A continuación, se listan aspectos a tener en cuenta:
+\begin{itemize}
+  \item Existen 185 ids que corresponden a una parcela única.
+  \item Cada polígono tiene de 1 a 3 árboles que corresponden a una misma variedad, es decir se tienen 185 variedades distintas
+   de durazneros.
+  \item La fecha (número de la celda) se toma cuando aproximadamente el \%50 de las flores del árbol están abiertas. 
+ \end{itemize} 
+
+En la tabla \ref{tab:nullsdataset} se presenta la insuficiencia de datos que presenta el dataset.
+
+\begin{table}[h]
+  \centering
+  \caption{Cantidad de datos faltantes en el dataset original.}
+  \begin{tabular}{l c c}    
+    \toprule
+     \textbf{Columna} & \textbf{Cantidad de Nulos} \\
+    \midrule
+    Dias-floracion-17 & 35 \\		
+    Dias-floracion-18	 & 19  \\
+    Dias-floracion-19	& 38  \\
+    Dias-floracion-20	 & 47 \\
+    Dias-floracion-21	 & 1 \\
+    Dias-floracion-22	 & 2 \\
+    Dias-floracion-23	 & 8 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:nullsdataset}
+\end{table}
+
+La presencia de valores faltantes puede afectar negativamente el rendimiento de los modelos
+de aprendizaje automático, introduciendo sesgos o impidiendo que ciertos algoritmos funcionen
+correctamente. Identificar y gestionar estos valores ya sea imputándolos, eliminándolos o 
+analizando su patrón de aparición permite mejorar la calidad del dataset, aumentar la 
+robustez del modelo y garantizar que las predicciones sean más precisas y confiables.
+
+\section{Proceso de descarga de imágenes}
+El proceso completo de descarga de imágenes satelitales para cada parcela en las distintas fechas de 
+floración puede desglosarse en dos etapas principales. La primera abarca el análisis y las consideraciones 
+fundamentales para la selección de la fuente de adquisición de imágenes. La segunda se centra en la 
+problemática detectada respecto a la proximidad entre parcelas y la estrategia adoptada para su resolución.
+
+\subsection{Consideraciones}
+En la sección \ref{sec:seguimientofloracion} se analizan las distintas plataformas de teledetección 
+disponibles. A continuación, se detallan los criterios considerados para 
+seleccionar la más adecuada:
+
+\begin{itemize}
+  \item Intervalo de revisión: Se refiere a la periodicidad con la que el satélite captura
+    nuevas imágenes. Dado que intervalos largos pueden generar variaciones significativas 
+    en la vegetación, se priorizó un satélite con mayor frecuencia de captura.
+  \item Disponibilidad temporal de los datos: Se evaluó el rango de fechas en que los datos
+    están disponibles. Como el análisis requiere información desde 2017, se seleccionó el 
+    conjunto de datos que cubre dicho período.
+  \item Cantidad de bandas espectrales: Las bandas espectrales representan distintos rangos 
+    del espectro electromagnético y permiten analizar diversas características de la superficie
+    terrestre. Se optó por la plataforma que ofrece el mayor número de bandas, ya que son 
+    fundamentales para el cálculo de los índices de vegetación.
+  \item Accesibilidad: Se consideró si el acceso a los datos es gratuito o pago. En este caso, 
+    se priorizó el uso de fuentes de acceso libre.
+  \item Resolución espacial: Hace referencia al tamaño del píxel en cada banda espectral, lo 
+    que influye en el nivel de detalle de la imagen. Aunque un menor tamaño de píxel proporciona
+     mayor precisión, este criterio no fue determinante en la selección.
+\end{itemize}
+
+Tras el análisis comparativo de las distintas plataformas se optó por Sentinel-2,
+era la opción más adecuada para este trabajo, al reunir las condiciones 
+necesarias en términos de resolución temporal, acceso a datos históricos, riqueza
+espectral y disponibilidad gratuita.
+
+\subsection{Elección de parcelas}
+
+En la figura \ref{fig:parcelasSP} se observa el total de parcelas de árboles de durazno ubicadas 
+en INTA San Pedro identificadas a través de Google Earth Engine. 
+
+Luego, se determinó que la proximidad entre las parcelas era demasiado reducida para una correcta
+extracción de los índices de vegetación, debido a que la resolución espacial del satélite 
+resultaba mayor al área individual de cada parcela. Para abordar esta limitación, se llevó a cabo una 
+subselección de parcelas que presentaran una distancia mínima adecuada entre sí. La figura \ref{fig:parcelasfinalSP} 
+ilustra el conjunto final de parcelas seleccionadas tras este proceso.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./Figures/parcelas_san_pedro.PNG}
+	\caption{Parcelas de durazneros de INTA San Pedro.}
+	\label{fig:parcelasSP}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./Figures/recorte_lotes_completo_sentinel.PNG}
+	\caption{Parcelas seleccionadas de durazneros de INTA San Pedro.}
+	\label{fig:parcelasfinalSP}
+\end{figure}
