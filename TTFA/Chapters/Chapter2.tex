@@ -7,7 +7,7 @@
 %----------------------------------------------------------------------------------------
 En esta sección se aborda el estudio de redes neuronales profundas aplicadas al análisis y predicción en 
 agricultura, con un enfoque en la floración del duraznero. Se presenta una comparación entre diferentes 
-arquitecturas de deep learning, destacando sus ventajas y limitaciones en este contexto. Además, se 
+arquitecturas de \textit{deep learning}, se destacan sus ventajas y limitaciones en este contexto. Además, se 
 exploran los índices de vegetación más relevantes, utilizados para monitorear el estado de la cobertura 
 vegetal y mejorar la precisión de los modelos predictivos.
 
@@ -23,16 +23,16 @@ arquitecturas aplicadas en este ámbito:
 	visuales, como imágenes satelitales o fotografías de cultivos. En el contexto de la floración del duraznero,
 	pueden identificar patrones y características en imágenes que indican el inicio del proceso de
 	floración. Por ejemplo, un estudio implementó dos arquitecturas de CNN para detectar la severidad de 
-	lesiones causadas por enfermedades en hojas de durazno, logrando una precisión del \%87 \citep{Rodriguez2023}. 
-	\item Redes Generativas Antagónicas (GAN): son una arquitectura de aprendizaje 
-	profundo, constan de dos modelos neuronales que compiten entre sí: un generador, que crea datos sintéticos, y un 
-	discriminador, que evalúa la autenticidad de los datos. Esta dinámica permite que aprendan a generar datos 
+	lesiones causadas por enfermedades en hojas de durazno, y obtuvo una precisión del 87\,\% \citep{Rodriguez2023}. 
+	\item Redes Generativas Antagónicas (GAN): esta arquitectura de aprendizaje profundo está compuesta 
+	por dos modelos neuronales que compiten entre sí: un generador, que crea datos sintéticos, y un 
+	discriminador, que evalúa la autenticidad de los datos. Esta dinámica permite generar datos 
 	realistas similares a los de entrenamiento. En el ámbito agrícola, se han utilizado para generar imágenes 
-	sintéticas de cultivos, facilitando la ampliación de conjuntos de datos para entrenar otros modelos de aprendizaje 
+	sintéticas de cultivos, lo cual facilitó la ampliación de conjuntos de datos para entrenar otros modelos de aprendizaje 
 	automático \citep{Goodfellow2014}.
 	\item Redes Neuronales de Base Radial (RBF): han sido aplicadas en estudios agrícolas para modelar relaciones
 	 no lineales entre variables climáticas y fenológicas. Poseen gran capacidad para aproximar funciones complejas.
-	 Por ejemplo, un estudio empleó RBF para estimar la evapotranspiración de referencia, demostrando su capacidad
+	 Por ejemplo, un estudio empleó RBF para estimar la evapotranspiración de referencia, y demostró su capacidad
 	para modelar relaciones no lineales entre variables climáticas y fenómenos agrícolas \citep{Cerv2012}.
 \end{enumerate}
 	
@@ -65,14 +65,14 @@ En la tabla \ref{tab:redes_dl} se presenta un cuadro comparativo de las distinta
 
 
 	Al seleccionar la arquitectura adecuada para un modelo de deep learning en tareas como la predicción de
-	floración de plantas, es crucial considerar varios factores, como la naturaleza de los datos, el tipo
+	floración de plantas, es crucial considerar varios factores, entre ellos la naturaleza de los datos, el tipo
 	de problema a resolver y los recursos disponibles. Las redes neuronales convolucionales (CNN) son 
-  	ideales para tareas relacionadas con el procesamiento de imágenes o datos espaciales, mientras que 
-  	las redes neuronales recurrentes (RNN) y sus variantes como LSTM son más adecuadas para modelar 
+  	ideales para tareas relacionadas con el procesamiento de imágenes o datos espaciales. En cambio, 
+  	las redes neuronales recurrentes (RNN) y sus variantes como LSTM, son más adecuadas para modelar 
   	secuencias temporales, como los datos fenológicos de las plantas. Por otro lado, las redes generativas
    	antagónicas (GAN) pueden ser útiles cuando se requiere generar datos sintéticos, especialmente 
    	cuando hay escasez de datos etiquetados. La comparación entre modelos permite identificar cuál se adapta
-	mejor a los objetivos del trabajo, maximizando la precisión y eficiencia del sistema, y 
+	mejor a los objetivos del trabajo, con el fin de maximizar la precisión y eficiencia del sistema, y 
 	minimizando los errores o el sobreajuste. La elección adecuada y la experimentación con diferentes
 	enfoques garantizan un análisis robusto y confiable, fundamental para obtener resultados
 	aplicables en la práctica agrícola.
@@ -99,45 +99,45 @@ A continuación se presentan índices de vegetación relevantes para este trabaj
 
 \begin{itemize}
 	\item \textit{Normalized Difference Vegetation Index} (NDVI) \citep{Xue2017}: se calcula como 
-	   	relación normalizada entre las bandas roja e infrarroja cercano, sus valores van en el rango
-	   	entre 0 y 1. Tiene una reacción sensible a la vegetación verde, incluso en zonas poco cubiertas
-		de vegetación. El NDVI es sensible a los efectos del brillo del suelo, el color del suelo,
-		la atmósfera, las nubes y la sombra de las nubes, y la sombra del dosel foliar, y requiere
-		la calibración de la teledetección. Se expresa como:
+	   	relación normalizada entre las bandas roja e infrarroja cercana. Sus valores van en el rango
+	   	entre 0 y 1. Tiene una reacción sensible a la vegetación verde, incluso en zonas con cobertura 
+		vegetal escasa. El NDVI es sensible a los efectos del brillo y color del suelo,
+		la atmósfera, las nubes y la sombra de las nubes, y la sombra del dosel foliar. Por ello su
+		aplicación requiere la calibración de la teledetección. Se expresa como en la ecuación \ref{eq:ndvi}:
 	
 		\begin{equation}
+			\label{eq:ndvi}
 			NDVI = \left( \frac{p_{NIR} - p_{R}}{p_{NIR}} \right) + p_{R}
 		\end{equation}
 
-	\item \textit{Enhanced Vegetation Index} (EVI) \citep{Xue2017}: se trata de un parámetro que corrige simultáneamente 
-		los efectos del suelo y de la atmósfera que puede expresarse de la siguiente manera:
-	
+	\item \textit{Enhanced Vegetation Index} (EVI) \citep{Xue2017}: actúa como un parámetro que 
+		corrige simultáneamente los efectos del suelo y de la atmósfera. Su formulación incluye los valores de NIR,
+		 $R$ y $B$, previamente corregidos por la atmósfera. El término $L$ representa un parámetro de ajuste asociado
+		  al suelo, cuyo valor se establece en 1. Además, se incorporan dos parámetros constantes con valores de 6 y 
+		  7.5, respectivamente. La expresión matemática del índice se presenta en la ecuación \ref{eq:evi}:
+
 		\begin{equation}
+			\label{eq:evi}
 			EVI = 2.5 \times \frac{(P_n - P_r)}{P_n + C_1 P_r - C_2 P_b + L}
 		\end{equation}
-				
-		que incluye los valores de NIR, $R$ y $B$, que son corregidos por la atmósfera; $L$ representa los parámetros
-		de ajuste del suelo, y su valor es igual a 1; y los parámetros corresponden a valores constantes 
-		equivalentes a 6 y 7.5, respectivamente.	
 
 	\item \textit{Atmospherically Resistant Vegetation Index} (ARVI) \citep{Xue2017}: se utiliza habitualmente para eliminar los efectos de los
 		aerosoles atmosféricos. Se basa en el supuesto de que la atmósfera afecta significativamente a $R$ en comparación con el 
-		NIR y puede reducir eficazmente la dependencia de este índice de vegetación de los efectos atmosféricos, su fórmula puede 
-		expresarse como: 
-		
+		NIR y puede reducir eficazmente la dependencia de este índice de vegetación de los efectos atmosféricos. En su fórmula 
+		$RB$ es la diferencia entre $B$ y $R$, y está relacionada con la reflectancia influenciada por la dispersión molecular y la absorción gaseosa para 
+		las correcciones por ozono, y representa los parámetros de climatización. La expresión correspondiente se muestra en la ecuación \ref{eq:arvi}:
+
 		\begin{equation}
+			\label{eq:arvi}
 			ARVI = \frac{(NIR - RB)}{(NIR + RB)}
 		\end{equation}
-
-		donde $RB$ es la diferencia entre $B$ y $R$, es la reflectividad relacionada con la dispersión molecular
-		y la absorción gaseosa para las correcciones por ozono, y representa los parámetros de 
-		climatización.
 	
 	\item \textit{Soil-Adjusted Vegetation Index} (SAVI) \citep{Xue2017}: se estableció para mejorar la 
 		sensibilidad del NDVI al fondo del suelo, donde $L$ es el índice de condicionamiento del suelo.
-		El rango de $L$ es de 0 a 1. Su fórmula se expresa de la siguiente manera:
+		El rango de $L$ es de 0 a 1. Su fórmula se puede ver expresada en la ecuación \ref{eq:savi}:
 
 		\begin{equation}
+			\label{eq:savi}
 			SAVI = \frac{(P_n - P_r)(1 + L)}{P_n + P_r + L}
 		\end{equation}
 \end{itemize}
@@ -149,6 +149,27 @@ A continuación se presentan índices de vegetación relevantes para este trabaj
 	la toma de decisiones en la gestión de los cultivos y son esenciales para mejorar la eficiencia y 
 	sostenibilidad en la agricultura moderna.
 
+\section{Teledetección}
+	\label{sec:seguimientofloracion}
+	En la tabla \ref{tab:plataformas} se presentan plataformas de teledetección disponibles y requisitos sugeridos 
+	(*marginal, **óptimo) para supervisar la fenología de la floración forestal\citep{Dixon2023}.
+	
+	
+	\begin{table}[h]
+		\centering
+		\caption{Plataformas de teledetección disponibles.}
+		\begin{tabular}{l c c c c}    
+			\toprule
+			\textbf{Sensor} & \textbf{Resolución} & \textbf{Frecuencia} & \textbf{Extensión} & \textbf{Coste} \\
+			\midrule
+			PlanetScope & 3m*  & Diariamente**  & Regional** & Moderado* \\		
+			Sentinel-2	 & 10 - 20 m  & 5 días  & Continental**   & Bajo**  \\
+			Landsat	 & 30 m  & 16 días  & Continental** & Bajo** \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:plataformas}
+	\end{table}
+
 \section{Dependencias y Herramientas}
 
 \subsection{Python}
@@ -158,16 +179,16 @@ geoespacial. Para el preprocesamiento de imágenes satelitales, algunas de las b
 incluyen:
 
 \begin{enumerate}
-	\item Rasterio: Biblioteca que permite leer y escribir archivos raster, que son fundamentales en el 
+	\item Rasterio: biblioteca que permite leer y escribir archivos raster, que son fundamentales en el 
 	análisis de imágenes satelitales. Rasterio facilita la manipulación de datos en formatos comunes como
 	GeoTIFF.
-	\item NumPy: Utilizada para el manejo de matrices y operaciones matemáticas sobre las imágenes, especialmente
+	\item NumPy: utilizada para el manejo de matrices y operaciones matemáticas sobre las imágenes, especialmente
 	útil cuando se trabaja con grandes volúmenes de datos raster.  
 	\item GeoPandas: es una extensión de Pandas diseñada para el manejo de datos geoespaciales. Agrega soporte 
-	para trabajar con geometrías como puntos, líneas y polígonos dentro de un DataFrame, facilitando la
+	para trabajar con geometrías como puntos, líneas y polígonos dentro de un DataFrame, facilita la
 	manipulación de datos espaciales en Python.
 	\item Plotly: es una biblioteca de visualización interactiva en Python que permite la creación de gráficos
-	 avanzados, incluyendo mapas geoespaciales. Es una herramienta clave para la exploración y análisis de 
+	 avanzados, incluye mapas geoespaciales. Es una herramienta clave para la exploración y análisis de 
 	 datos provenientes de imágenes satelitales, ya que facilita la representación de patrones y
 	tendencias en mapas interactivos.
 	\end{enumerate}
@@ -195,7 +216,7 @@ Características Principales
 	 para corrección atmosférica, resampling, y mosaicos de imágenes, lo que permite un análisis rápido y 
 	 preciso.
 	\item Análisis a gran escala: permite realizar análisis a nivel global o en áreas de interés específicas,
-	 utilizando potentes algoritmos de análisis de imágenes, como la clasificación de imágenes y la detección 
+	 utiliza algoritmos potentes de análisis de imágenes, como la clasificación de imágenes y la detección 
 	 de cambios.
 \end{itemize}
 
