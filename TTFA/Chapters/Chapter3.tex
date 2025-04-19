@@ -2,9 +2,8 @@
 
 \label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-En este capítulo se describe la problemática planteada, seguidamente se describe el enfoque 
-utilizado para resolver el problema, detallando las estrategias adoptadas. Luego, se expone 
-un análisis exploratorio inicial de los datos y el proceso de descarga de imágenes satelitales. 
+Este capítulo presenta la problemática abordada y expone el enfoque adoptado para su resolución, junto con las estrategias implementadas. Luego, se describe 
+el análisis exploratorio inicial de los datos y el proceso de descarga de imágenes satelitales. 
 Finalmente, se presentan los modelos de aprendizaje automático utilizados, junto con el proceso 
 de desarrollo de los scripts para su implementación.
 \definecolor{mygreen}{rgb}{0,0.6,0}
@@ -50,10 +49,9 @@ de desarrollo de los scripts para su implementación.
 \section{Enfoque para resolver el problema}
 
 El Laboratorio de Biotecnología recopiló datos sobre las fechas de floración de durazneros
-y las ubicaciones de las parcelas durante un período de cinco años. Con base en esta 
-información, se evaluó la viabilidad de descargar imágenes satelitales correspondientes
-a dichas parcelas en las fechas de floración, con el propósito de calcular índices de
-vegetación y mejorar la precisión en las predicciones.
+y las ubicaciones de las parcelas durante un período de cinco años. A partir de esta información, 
+se evaluó la viabilidad de descargar imágenes satelitales correspondientes a las parcelas en las 
+fechas de floración. El objetivo fue calcular índices de vegetación y aumentar la precisión de las predicciones.
 
 El proceso del trabajo se compone en: 
 
@@ -68,7 +66,7 @@ El proceso del trabajo se compone en:
         \item Descarga de imágenes satelitales correspondientes a las parcelas en sus respectivas fechas de floración.
         \item Lectura y procesamiento de los archivos .TIFF para extraer índices de vegetación.
       \end{itemize}
-  \item Construcción del dataset
+  \item Construcción del \textit{dataset}
       \begin{itemize}
         \item Confección de un nuevo conjunto de datos enriquecido con índices de vegetación.
         \item Estructuración y limpieza del dataset final.
@@ -81,7 +79,7 @@ El proceso del trabajo se compone en:
   \item Evaluación y ajuste del modelo
       \begin{itemize}
         \item Cálculo de métricas de desempeño del modelo.
-        \item Validación de resultados. Retroalimentación para mejora, y reentrenamiento de modelo.
+        \item Validación de resultados. Retroalimentación para mejora y reentrenamiento de modelo.
       \end{itemize}
 	\end{enumerate}
 
@@ -108,12 +106,12 @@ estructura de dichos datos se observa en la tabla \ref{tab:firstdataset}.
 		\label{tab:firstdataset}
 	\end{table}
 
-A continuación, se listan aspectos a tener en cuenta:
+  En este conjunto de datos, cada observación está asociada a un identificador único (ID), que permite distinguir las parcelas entre sí.  
+  A continuación, se listan aspectos a tener en cuenta:
 \begin{itemize}
-  \item Existen 185 ids que corresponden a una parcela única.
-  \item Cada polígono tiene de 1 a 3 árboles que corresponden a una misma variedad, es decir se tienen 185 variedades distintas
-   de durazneros.
-  \item La fecha (número de la celda) se toma cuando aproximadamente el \%50 de las flores del árbol están abiertas. 
+  \item Existen 185 IDs que corresponden a una parcela única.
+  \item Cada polígono contiene entre uno y tres árboles de una misma variedad. En total, se registraron 185 variedades distintas de durazneros.
+  \item La fecha (número de la celda) se toma cuando aproximadamente el 50\,\% de las flores del árbol están abiertas. 
  \end{itemize} 
 
 En la tabla \ref{tab:nullsdataset} se presenta la insuficiencia de datos que presenta el dataset.
@@ -137,16 +135,17 @@ En la tabla \ref{tab:nullsdataset} se presenta la insuficiencia de datos que pre
   \label{tab:nullsdataset}
 \end{table}
 
-La presencia de valores faltantes puede afectar negativamente el rendimiento de los modelos
-de aprendizaje automático, introduciendo sesgos o impidiendo que ciertos algoritmos funcionen
-correctamente. Identificar y gestionar estos valores ya sea imputándolos, eliminándolos o 
-analizando su patrón de aparición permite mejorar la calidad del dataset, aumentar la 
-robustez del modelo y garantizar que las predicciones sean más precisas y confiables.
+La presencia de valores faltantes puede afectar de forma negativa el rendimiento
+de los modelos de aprendizaje automático, ya que introduce sesgos o impide el
+funcionamiento correcto de ciertos algoritmos. La identificación y el tratamiento 
+adecuado de estos valores, mediante su imputación, eliminación o el análisis de su patrón 
+de aparición, contribuyen a mejorar la calidad del conjunto de datos. Esto, a su vez, incrementa 
+la robustez del modelo y favorece predicciones más precisas y confiables.
 
 \section{Proceso de descarga de imágenes}
 El proceso completo de descarga de imágenes satelitales para cada parcela en las distintas fechas de 
-floración puede desglosarse en dos etapas principales. La primera abarca el análisis y las consideraciones 
-fundamentales para la selección de la fuente de adquisición de imágenes. La segunda se centra en la 
+floración puede desglosarse en dos etapas principales. La primera, abarca el análisis y las consideraciones 
+fundamentales para la selección de la fuente de adquisición de imágenes. La segunda, se centra en la 
 problemática detectada respecto a la proximidad entre parcelas y la estrategia adoptada para su resolución.
 
 \subsection{Consideraciones}
@@ -155,49 +154,51 @@ disponibles. A continuación, se detallan los criterios considerados para
 seleccionar la más adecuada:
 
 \begin{itemize}
-  \item Intervalo de revisión: Se refiere a la periodicidad con la que el satélite captura
+  \item Intervalo de revisión: se refiere a la periodicidad con la que el satélite captura
     nuevas imágenes. Dado que intervalos largos pueden generar variaciones significativas 
     en la vegetación, se priorizó un satélite con mayor frecuencia de captura.
-  \item Disponibilidad temporal de los datos: Se evaluó el rango de fechas en que los datos
+  \item Disponibilidad temporal de los datos: se evaluó el rango de fechas en que los datos
     están disponibles. Como el análisis requiere información desde 2017, se seleccionó el 
     conjunto de datos que cubre dicho período.
-  \item Cantidad de bandas espectrales: Las bandas espectrales representan distintos rangos 
+  \item Cantidad de bandas espectrales: las bandas espectrales representan distintos rangos 
     del espectro electromagnético y permiten analizar diversas características de la superficie
     terrestre. Se optó por la plataforma que ofrece el mayor número de bandas, ya que son 
     fundamentales para el cálculo de los índices de vegetación.
-  \item Accesibilidad: Se consideró si el acceso a los datos es gratuito o pago. En este caso, 
+  \item Accesibilidad: se consideró si el acceso a los datos es gratuito o pago. En este caso, 
     se priorizó el uso de fuentes de acceso libre.
-  \item Resolución espacial: Hace referencia al tamaño del píxel en cada banda espectral, lo 
+  \item Resolución espacial: hace referencia al tamaño del píxel en cada banda espectral, lo 
     que influye en el nivel de detalle de la imagen. Aunque un menor tamaño de píxel proporciona
      mayor precisión, este criterio no fue determinante en la selección.
 \end{itemize}
 
-Tras el análisis comparativo de las distintas plataformas se optó por Sentinel-2,
-era la opción más adecuada para este trabajo, al reunir las condiciones 
-necesarias en términos de resolución temporal, acceso a datos históricos, riqueza
-espectral y disponibilidad gratuita.
+Tras analizar las distintas plataformas, se optó por Sentinel-2. Esta opción resultó más adecuada 
+para el trabajo, ya que reúne las condiciones necesarias en cuanto a resolución temporal, acceso a 
+datos históricos, riqueza espectral y disponibilidad gratuita.
 
 \subsection{Elección de parcelas}
 
 En la figura \ref{fig:parcelasSP} se observa el total de parcelas de árboles de durazno ubicadas 
-en INTA San Pedro identificadas a través de Google Earth Engine. 
+en INTA San Pedro, identificadas a través de Google Earth Engine. 
 
-Luego, se determinó que la proximidad entre las parcelas era demasiado reducida para una correcta
-extracción de los índices de vegetación, debido a que la resolución espacial del satélite 
-resultaba mayor al área individual de cada parcela. Para abordar esta limitación, se llevó a cabo una 
-subselección de parcelas que presentaran una distancia mínima adecuada entre sí. La figura \ref{fig:parcelasfinalSP} 
+Luego, se observó que las parcelas están demasiado próximas entre sí. Esto dificultaba la correcta
+extracción de los índices de vegetación, ya que la resolución espacial del satélite superaba el tamaño
+individual de cada parcela. Para abordar esta limitación, se llevó a cabo una subselección de 
+parcelas que presentaran una distancia mínima adecuada entre sí. La figura \ref{fig:parcelasfinalSP} 
 ilustra el conjunto final de parcelas seleccionadas tras este proceso.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./Figures/parcelas_san_pedro.PNG}
-	\caption{Parcelas de durazneros de INTA San Pedro.}
+	\caption{Parcelas de durazneros de INTA San Pedro \protect\footnotemark.}
 	\label{fig:parcelasSP}
 \end{figure}
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./Figures/recorte_lotes_completo_sentinel.PNG}
-	\caption{Parcelas seleccionadas de durazneros de INTA San Pedro.}
+	\caption{Parcelas seleccionadas de durazneros de INTA San Pedro \protect\footnotemark.}
 	\label{fig:parcelasfinalSP}
 \end{figure}
+
+
+\footnotetext{Imagenes de elaboración propia a partir del proveedor Sentinel-2.}
