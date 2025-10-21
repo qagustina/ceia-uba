@@ -1,0 +1,535 @@
+\chapter{Diseño e implementación} % Main chapter title
+
+\label{Chapter3} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+Este capítulo aborda en detalle el proceso de preparación, análisis e integración de los datos utilizados 
+en el estudio. En primer lugar, se describen las etapas de preprocesamiento, que incluyen el flujo de procesamiento
+ de datos crudos, con la gestión y extracción de información a partir de archivos satelitales, y el flujo 
+ de procesamiento de datos tabulares, donde se trabaja sobre la estructura, depuración y reorganización de 
+ los registros de floración y cosecha. Estas fases permiten obtener un conjunto de datos consolidado, apto
+  para el análisis y modelado posterior. Posteriormente, se presenta la caracterización de los montes frutales 
+  a partir de índices de vegetación, así como las limitaciones encontradas 
+  y las soluciones propuestas. Además, se detalla la fusión de las 
+  distintas fuentes de datos y se introduce la arquitectura de inteligencia
+   artificial, que integra los componentes analíticos y predictivos del sistema. En conjunto, 
+   estas secciones conforman la base metodológica sobre la cual se desarrolla la predicción de la floración en 
+   los durazneros bajo estudio.
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% parámetros para configurar el formato del código en los entornos lstlisting
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  %escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  %extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  %frame=single,	                % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=[ANSI]C,                % the language of the code
+  %otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname,                  % show the filename of files included with \lstinputlisting; also try caption instead of title
+  morecomment=[s]{/*}{*/}
+}
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+\section{Enfoque para resolver el problema}
+
+El Laboratorio de Biotecnología recopiló, durante un período de cinco años, datos sobre las 
+fechas de floración y cosecha de durazneros, junto con la ubicación geográfica de cada parcela. 
+Con esta información se evaluó la posibilidad de descargar imágenes satelitales correspondientes 
+a dichas parcelas, tanto en los días previos como durante la floración. El objetivo fue calcular 
+índices de vegetación y a partir de ello, analizar información satelital relevante que permita anticipar el momento
+de la floración.
+
+El proceso del trabajo se compone en: 
+
+\begin{enumerate}
+  \item Adquisición y preprocesamiento de datos
+      \begin{itemize}
+        \item Integración y limpieza de datos crudos: fechas de floración, cosecha y ubicaciones de parcelas.
+      \end{itemize}
+  \item Investigación de colecciones de datos de imágenes satelitales
+      \begin{itemize}
+        \item Análisis detallado de los catálogos de datos proporcionados por Earth Engine 
+              y la constelación PlanetScope de Planet.
+      \end{itemize}
+  \item Obtención y procesamiento de imágenes satelitales
+      \begin{itemize}
+        \item Desarrollo de un script en Python para interactuar con la API de Google Earth Engine.
+        \item Descarga de imágenes satelitales de las parcelas en fechas previas y durante la floración.
+        \item Lectura y procesamiento de los archivos para extraer índices de vegetación y analizar
+              su evolución en fechas previas a la floración.
+      \end{itemize}
+  \item Construcción del \textit{dataset}
+      \begin{itemize}
+        \item Confección de un nuevo conjunto de datos enriquecido con índices de vegetación.
+        \item Aplicación de técnicas de ingeniería de características.
+        \item Estructuración y limpieza del dataset final.
+      \end{itemize}
+  \item  Modelado y entrenamiento
+      \begin{itemize}
+        \item Preprocesamiento de datos.
+        \item Entrenamiento de modelos.
+      \end{itemize}
+  \item Evaluación y ajuste del modelo
+      \begin{itemize}
+        \item Cálculo de métricas de desempeño del modelo.
+        \item Validación de resultados. Retroalimentación para mejora y reentrenamiento de modelo.
+      \end{itemize}
+	\end{enumerate}
+
+\section{Proceso de adquisición de imágenes de satélite}
+
+El proceso completo de recopilación de imágenes aéreas para los cultivos de durazno puede desglosarse 
+en tres etapas principales. La primera, abarca el análisis y las 
+consideraciones fundamentales para la selección de la fuente de adquisición de datos. La segunda,
+se centra en la problemática detectada respecto a la proximidad entre parcelas y la estrategia adoptada
+para su resolución. Finalmente, la tercera etapa está vinculada con la definición de las fechas de 
+descarga. 
+
+\subsection{Consideraciones}
+En la sección \ref{subsec:plataformas} se analizan las distintas plataformas de teledetección 
+disponibles. A continuación, se detallan los criterios considerados para 
+seleccionar la más adecuada:
+
+\begin{itemize}
+  \item Intervalo de revisión: se refiere a la periodicidad con la que el satélite captura
+    nuevas imágenes. Dado que intervalos largos pueden generar variaciones significativas 
+    en la vegetación, se priorizó un satélite con mayor frecuencia de captura.
+  \item Disponibilidad temporal de los datos: se evaluó el rango de fechas en que los datos
+    están disponibles. Como el análisis requiere información desde 2017, se seleccionó el 
+    conjunto de datos que cubre dicho período.
+  \item Cantidad de bandas espectrales: las bandas espectrales representan distintos rangos 
+    del espectro electromagnético y permiten analizar diversas características de la superficie
+    terrestre. Se optó por la plataforma que ofrece el mayor número de bandas, ya que son 
+    fundamentales para el cálculo de los índices de vegetación.
+  \item Accesibilidad: se consideró si el acceso a los datos es gratuito o pago. En este caso, 
+    se priorizó el uso de fuentes de acceso libre.
+  \item Resolución espacial: hace referencia al tamaño del píxel en cada banda espectral, lo 
+    que influye en el nivel de detalle de la imagen. Aunque un menor tamaño de píxel proporciona
+     mayor precisión, este criterio no fue determinante en la selección.
+\end{itemize}
+
+Tras analizar las distintas plataformas, se optó por Sentinel-2. Esta opción resultó más adecuada 
+para el trabajo, ya que reúne las condiciones necesarias en cuanto a resolución temporal, acceso a 
+datos históricos, riqueza espectral y disponibilidad gratuita.
+
+\subsection{Proximidad de parcelas}
+
+La figura \ref{fig:parcelasSP} muestra una imagen aérea de parcelas de árboles de durazno. Se observó 
+que las parcelas están demasiado próximas entre sí. Esto dificultaba la correcta
+extracción de los índices de vegetación, ya que la resolución espacial del satélite superaba el tamaño
+individual de cada parcela. Para abordar esta limitación, se llevó a cabo una selección de 
+parcelas que presentaran una distancia mínima adecuada entre sí, los recortes por debajo la figura principal
+ilustran el conjunto final de parcelas seleccionadas tras este proceso.
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/recorte_parcelas.png}
+	\caption{Imagen satelital de parcelas. (a) Imagen con parcelas completas. (b) Parcelas seleccionadas\protect\footnotemark.}
+	\label{fig:parcelasSP}
+\end{figure}
+\footnotetext{Imagen de elaboración propia a partir del proveedor Sentinel-2.}
+
+\clearpage
+
+\subsection{Calendario de obtención de imágenes}
+
+En la etapa inicial del proyecto, la recolección de imágenes de satélite se delimitó a los 
+periodos específicos de la floración de los árboles en estudio. Este lapso temporal comprendía, 
+de forma aproximada, los meses de agosto, septiembre, octubre y noviembre, abarcando la ventana 
+fenológica completa desde el inicio de la floración del primer ejemplar hasta su culminación 
+en el último árbol. Esta definición inicial respondía a la necesidad de focalizar el análisis 
+en la fase de máxima actividad biológica.
+
+Posteriormente, a partir de un análisis y una revisión conjunta con el equipo del Laboratorio de 
+Biotecnología, se determinó la conveniencia de expandir el marco temporal de la investigación. 
+Esta ampliación presenta la importancia de incorporar la información satelital correspondiente a 
+los meses inmediatamente previos a la floración. Se decidió incluir imágenes capturadas durante mayo, 
+junio y julio.
+
+La integración de estos meses pre-floración permite identificar tendencias previas a la floración y 
+mejorar la precisión de los modelos predictivos que se verán en detalle más adelante.
+
+\clearpage
+
+\section{Área de estudio}  
+
+En la figura \ref{fig:sanpedro} se observa el Partido de San Pedro, situado en la región del norte de la Provincia 
+de Buenos Aires, Argentina. Esta zona es reconocida como un núcleo agroproductivo de 
+significativa relevancia para el país. 
+
+La estación INTA San Pedro, trabaja principalmente en cuatro grandes cadenas: las frutas, las hortalizas,
+los viveros y las ornamentales. Además, por las características del territorio, también aborda a 
+través de sus Agencias de Extensión los cultivos extensivos. Su trabajo está orientado hacia la 
+producción integrada y de calidad, cuyos objetivos son proteger el medio ambiente, bregar por la 
+salud de los operarios y consumidores y mejorar la competitividad de las empresas agropecuarias del sector.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/san-pedro-mapa.png}
+	\caption{Imagen de Partido de San Pedro.\protect\footnotemark.}
+	\label{fig:sanpedro}
+\end{figure}
+\footnotetext{Imagen de fuente.}
+
+\clearpage
+
+\subsection{Unidades experimentales}
+
+La totalidad de las parcelas bajo estudio en este proyecto se encuentran ubicadas dentro de INTA 
+San Pedro. Las parcelas seleccionadas forman parte de los ensayos productivos y experimentales que 
+se llevan adelante en la institución.
+
+En la figura \ref{fig:parcelas-enestudio} se presentan imágenes aéreas de los lotes de cultivo 
+analizados, obtenidas y procesadas mediante la plataforma Google Earth Engine \citep{ee}, donde se identifican
+las áreas correspondientes a cada parcela y su distribución espacial dentro del establecimiento.
+
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/total_parcelas.png}
+	\caption{Parcelas de durazneros bajo estudio \protect\footnotemark.}
+	\label{fig:parcelas-enestudio}
+\end{figure}
+\footnotetext{Imagen de elaboración propia a partir del proveedor Sentinel-2.}
+
+\clearpage
+
+
+\section{Preprocesamiento de datos}
+El flujo general del procesamiento de datos consta de dos etapas principales: en la primera se gestionan y 
+procesan las imágenes satelitales, y en la segunda se trabajan los datos tabulares vinculados con la floración 
+y la cosecha.
+
+\subsection{Flujo de procesamiento de datos crudos} 
+En este apartado se describe el procedimiento aplicado para la gestión y procesamiento de las imágenes satelitales en 
+su estado inicial. El flujo incluye la descarga de los archivos originales, su organización, y el procedimiento de 
+generación del \textit{dataset} con información satelital.
+
+\subsubsection{Gestión de archivos}
+Se desarrolló un script que utiliza la librería earthengine-api \citep{eeapi} que realiza la descarga automática de imágenes satelitales a partir de 
+los límites geográficos de cada parcela. Como salida, genera un conjunto de archivos 
+en formato tiff, uno por parcela y obtenidos a intervalos de cinco días. Este procedimiento se aplicó para un período 
+de cinco años de datos. 
+
+A continuación, se ilustra la estructura final del directorio correspondiente a los datos recolectados:
+
+\texttt{%
+tiff/\\
+|- 2017/\\
+|  |- 2017-05-25\_2017-05-30\_clv2.tif\\
+|  |- 2017-05-25\_2017-05-30\_clv3.tif\\
+|  |- 2017-05-25\_2017-05-30\_clv5.tif\\
+|  |- \dots\\
+|- 2018/\\
+|- 2019/\\
+|- 2020/\\
+|- 2021/\\
+|- 2022/\\
+|- 2023/%
+}
+
+En la tabla \ref{tab:tab-cantidadtifs} se resume la cantidad total de imágenes adquiridas por año, 
+junto con sus respectivos tamaños y rangos temporales.
+
+\begin{table}[h]
+  \centering
+  \caption{Total de archivos y periodo temporal por año.}
+  \begin{tabular}{l c c c}    
+    \toprule
+     \textbf{Año} & \textbf{Total de archivos} & \textbf{Rango de tamaños} & \textbf{Rango de fechas}\\
+    \midrule
+    2017 & 405 & 8 - 39 KB & 2017-05-25 - 2017-10-15 \\		
+    2018	 & 858  & 8 - 40 KB & 2018-05-15 - 2018-09-20\\
+    2019	& 881  & 8 - 39 KB & 2019-05-10 - 2019-10-07\\
+    2020	 & 909 & 8 - 39 KB & 2020-05-01 - 2020-09-25\\
+    2021	 & 1076 & 8 - 40 KB & 2021-05-01 - 2021-09-29\\
+    2022	 & 1077 & 8 - 39 KB & 2022-05-01 - 2022-09-17\\
+    2023	 & 1542 & 8 - 39 KB & 2023-05-01 - 2023-11-10\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:tab-cantidadtifs}
+\end{table}
+
+
+\subsubsection{Extracción de datos}
+Una vez finalizado el proceso de descarga de los archivos, se llevó a cabo la etapa de preprocesamiento de las 
+imágenes satelitales. En esta fase, se utilizaron las bandas espectrales B2, B3, B4, B5, B6, B8 y B11 vistas en 
+la seccion \ref{subsec:bandas} para calcular los índices
+de vegetación RDVI, GNDVI, LCI, EVI, ARVI, SIPI y NDRE. Estos índices se emplearon como complemento del 
+NDVI, con el objetivo de obtener una caracterización más detallada y robusta del estado de la vegetación, 
+considerando distintos aspectos de la respuesta espectral de las plantas. De este modo, fue posible incorporar 
+información relacionada con el vigor, la estructura del dosel y el contenido de clorofila, aspectos fundamentales
+para el monitoreo y análisis de la dinámica vegetativa en el área de estudio.
+
+La figura \ref{fig:flujo-extraccion} muestra el flujo de generación del \textit{dataset}. Comienza con la lectura de las bandas espectrales  de un archivo de entrada 
+en formato tiff, que representa una parcela. Estas bandas conforman un cubo de datos 
+tridimensional (n x m x z), donde n y m son las dimensiones espaciales y z representa la cantidad de bandas 
+espectrales disponibles. Seguidamente se realiza el proceso del cálculo de índices por píxel: por cada archivo de parcela, 
+se procede a calcular todos los índices de vegetación, utilizando las reflectancias 
+registradas en las distintas bandas para cada uno de los píxeles. Esto genera una matriz de valores numéricos de 
+índices. Finalmente, se realiza el cálculo de un estadístico de resumen para toda la parcela. Este valor de resumen es la información que 
+se utiliza para rellenar el archivo de salida en formato csv, donde cada fila corresponderá a una parcela y 
+contendrá los estadísticos de los índices de vegetación, de este modo, se completa la generación del conjunto de datos.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./Figures/flujo-extracciondatos.png}
+	\caption{Flujo de generación de \textit{dataset} con información de satélite\protect\footnotemark.}
+	\label{fig:flujo-extraccion}
+\end{figure}
+\footnotetext{Imagen de elaboración propia.}
+
+\subsubsection{\textit{Dataset} generado}
+
+Aunque el proceso de generación del conjunto de datos genera un archivo en formato csv, la tabla \ref{tab:datasetsatelite} muestra
+una representación parcial de la primera versión de los datos en formato tabular para una mejor comprensión de su estructura.
+
+	\begin{table}[h]
+		\centering
+		\caption{Primera versión de conjunto de datos con información satelital.}
+    \footnotesize
+		\begin{tabular}{l c c c c c c}    
+			\toprule
+			\textbf{\#} & \textbf{ID} & \textbf{start-date} & \textbf{end-date} & \textbf{evi-median} & \textbf{\dots} & \textbf{gndvi-median} \\
+			\midrule
+			0 & clv2 & 2017-05-25 & 2017-05-30 & 0,2 & \dots & 0,2 \\		
+			1 & clv3 & 2017-05-25 & 2017-05-30 & 0,5  & \dots & 0,1 \\
+			2 & clv5 & 2017-05-25 & 2017-05-30 & 0,4  & \dots & 0,4 \\
+      \dots & \dots & \dots & \dots & \dots  & \dots & \dots \\
+      6749 & Flam Art & 2023-11-05 & 2023-11-10 & 0,8  & \dots & 0,5 \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:datasetsatelite}
+	\end{table}
+
+\subsection{Flujo de procesamiento de datos tabulares} 
+En esta sección se describen en detalle los procedimientos aplicados a los datos de floración y cosecha. Se 
+aborda la estructura inicial del conjunto de datos, el tratamiento de los valores nulos y el proceso de 
+reestructuración de la información para su posterior análisis.
+
+\subsubsection{Estructura de datos}
+Inicialmente, se consultaron los datos de floración correspondientes a todas las 
+parcelas para un período de estudio de cinco años. Una representación parcial de la 
+estructura de dichos datos se observa en la tabla \ref{tab:firstdataset}.
+
+	\begin{table}[h]
+		\centering
+		\caption{Estructura de datos de floración.}
+    \footnotesize
+		\begin{tabular}{l c c c c c}    
+			\toprule
+			\textbf{\#} & \textbf{ID} & \textbf{Dias-floracion-17} & \textbf{Dias-floracion-18} & \textbf{\dots} & \textbf{Coordenadas} \\
+			\midrule
+			0 & clv2 & 67 & 60 & \dots & [-59.7928,-33.7391][\dots] \\		
+			1 & clv3 & NaN & 30 & \dots & [-59.7927,-33.7390][\dots] \\
+			2 & clv5 & 73 & 65 & \dots & [-59.7926,-33.7389][\dots] \\
+      \dots & \dots & \dots & \dots & \dots & \dots \\
+      199 & Flam Art & 67 & NaN & \dots & [-59.7578,-33.7417][\dots]\\
+			\bottomrule
+		\end{tabular}
+		\label{tab:firstdataset}
+	\end{table}
+
+Este conjunto de datos corresponde a parcelas agrícolas, donde cada una es identificada por un ID único.  A continuación, se listan aspectos a tener en cuenta:
+  \begin{itemize}
+    \item La columna de coordenadas contiene los datos necesarios para formar un polígono que define la ubicación y forma de cada parcela.
+    \item Cada parcela contiene de uno a tres árboles de la misma variedad. En total, se registraron 200 variedades distintas de durazneros.
+    \item El formato de los datos de cosecha sigue la misma estructura que la presentada en la tabla \ref{tab:firstdataset}.
+    \item Las fechas de floración y cosecha se registran en formato juliano, indicando el número de días transcurridos desde el 1 de julio de la temporada de cultivo hasta la fecha del evento.
+  \end{itemize} 
+
+
+\subsubsection{Tratamiento de datos faltantes}
+
+Se identificó que los conjuntos de datos de floración y cosecha contienen una cantidad 
+significativa de valores faltantes. Específicamente, el conjunto de datos de floración
+presenta 150 registros nulos, que equivale al 9.42\% del total de sus datos. En el caso 
+del conjunto de datos de cosecha tiene 535 valores faltantes, lo que representa 
+un 33.61\% del total. 
+
+En principio, se evaluaron distintos métodos de imputación, analizando en detalle cuál resultaba más
+adecuado para este caso. Luego de probar algunas alternativas, se determinó que la interpolación lineal 
+era la opción más conveniente debido a la naturaleza de los datos. Este método estima los valores faltantes
+calculando una media ponderada a partir de los valores válidos que se encuentran a ambos lados. Para los 
+registros nulos ubicados al inicio o al final de una fila, se aplicó un método de relleno hacia adelante (ffill) 
+y relleno hacia atrás (bfill), respectivamente. Este enfoque resulta especialmente efectivo en conjuntos 
+de datos que presentan una tendencia clara, como en este estudio.
+
+\subsubsection{Reestructuración de datos}
+
+El conjunto de datos inicial de los datos de floración y cosecha presentan un formato ancho donde una única variable 
+se distribuye en múltiples columnas, con el año codificado dentro del nombre de cada columna (por ejemplo, dia-floracion-17, 
+dia-floracion-18). El paso de transformación realizado, consiste en el proceso de desapilamiento de estas columnas. Esto convierte el formato 
+inicial en un formato largo, que es más ordenado para el análisis. Se detallan las nuevas columnas creadas:
+
+\begin{itemize}
+    \item Variable año: el valor se extrae del nombre original de la columna.
+    \item Variables dia-floracion y dia-cosecha: valores de las variables.
+\end{itemize}
+
+En la tabla \ref{tab:largedataset} se muestra el nuevo formato, lo que facilita la posterior unión con el \textit{dataset} de índices de vegetación 
+utilizando las claves ID y Año.
+
+
+	\begin{table}[h]
+		\centering
+		\caption{Reestructuración de datos de floración y cosecha.}
+		\begin{tabular}{l c c c c c}    
+			\toprule
+			\textbf{\#} & \textbf{ID} & \textbf{año} & \textbf{dia-floracion} & \textbf{\dots} & \textbf{dia-cosecha} \\
+			\midrule
+			0 & clv2 & 2017 & 60 & \dots & 151 \\		
+			1 & clv3 & 2018 & 30 & \dots & 153 \\
+			2 & clv5 & 2019 & 65 & \dots & 231 \\
+      \dots & \dots & \dots & \dots & \dots & \dots \\
+      199 & Flam Art & 2023 & 26 & \dots & 173\\
+			\bottomrule
+		\end{tabular}
+		\label{tab:largedataset}
+	\end{table}
+
+\section{Caracterización de montes frutales}
+
+El objetivo de este trabajo fue la búsqueda y recopilación de información satelital para 
+vincularlas con características específicas de montes frutales. En la figura \ref{fig:evolucion-indices} se muestra la evolución temporal de distintos índices
+ de vegetación calculados a partir de imágenes satelitales para seis parcelas de durazneros 
+ (identificadas por su código ID). Cada panel corresponde a un lote específico y representa
+la variación de los valores de los índices a lo largo del tiempo durante la campaña 2023. Las curvas de colores indican la evolución de diferentes índices de vegetación, mientras que
+la línea vertical roja marca la fecha de floración registrada para cada parcela.
+Se observa que, en general, los valores de los índices presentan fluctuaciones a lo largo
+del ciclo fenológico, con una disminución marcada en los periodos previos a la floración. 
+
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/evolucion_indices_2023.png}
+	\caption{Evolución de índices de vegetación\protect\footnotemark.}
+	\label{fig:evolucion-indices}
+\end{figure}
+\footnotetext{Imagen de elaboración propia.}
+
+
+\section{Limitaciones y soluciones propuestas}
+
+El siguiente paso, después del monitoreo de los cultivos, consistió en explorar la información satelital con el objetivo de predecir la fecha de floración.
+En una primera instancia, con el conjunto de datos que se muestra en la tabla \ref{tab:datasetsatelite}, se implementaron
+varios modelos basados en árboles, entre ellos \textit{Decision Tree}, \textit{Random Forest}, \textit{LGBM},  \textit{Gradient Boosting} 
+y \textit{XGBoost} en sus versiones de regresión.
+Sin embargo, los resultados obtenidos no alcanzaron el nivel de desempeño esperado. Esto permitió comprobar que, aunque los 
+datos correspondientes a determinados meses del año, en un rango temporal de aproximadamente cinco días, son útiles
+para analizar el comportamiento de los índices de vegetación en etapas previas a la floración, no resultaron adecuados como
+variables predictoras en este contexto.
+
+Acá aparece la idea de aplicar \textit{feature engineering} sobre las variables disponibles, con 
+el objetivo de generar descriptores más representativos y relevantes para los modelos.
+
+\subsection{Ingeniería de características}
+
+Para cada unidad experimental, se obtuvieron estadísticos descriptivos a partir de los índices 
+de vegetación, considerando un rango temporal de observación acotado hasta la fecha de floración inclusive.
+\begin{itemize}
+\item Pendiente de crecimiento: calculada mediante una regresión lineal ajustada a los valores del índice de vegetación en el 
+período seleccionado. Este parámetro representa la evolución del vigor vegetativo previo a la floración, proporcionando una medida
+ cuantitativa de la dinámica de crecimiento del cultivo.
+\item Valor máximo: corresponde al punto más alto alcanzado por el índice dentro del mismo rango temporal. Este valor refleja el 
+nivel máximo registrado antes de la floración, y resulta útil para identificar el momento de mayor desarrollo del dosel vegetal.
+\end{itemize}
+
+\section{Fusión de las fuentes de datos}
+
+La figura \ref{fig:flujo-procesamiento} ilustra el flujo completo de integración de la información. Este flujo operativo
+consta de dos fuentes de datos principales:
+
+\begin{itemize}
+  \item Datos de cultivo: archivos iniciales en formato excel que contienen los registros de floración y cosecha.
+  \item Datos satelitales: archivos obtenidos mediante teledetección en formato tiff.
+\end{itemize}
+
+Ambas fuentes pasan por procesos de transformación detallados en las secciones anteriores.
+El resultado final de este proceso de integración es la generación de un único archivo consolidado
+ que reúne la totalidad de los datos transformados y combinados.
+
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/flujo-procesamiento.png}
+	\caption{Flujo de integración de datos de cultivo y de satélite\protect\footnotemark.}
+	\label{fig:flujo-procesamiento}
+\end{figure}
+\footnotetext{Imagen de elaboración propia.}
+
+
+\subsection{Nuevo conjunto de datos}
+Con el proceso de ingeniería de características, surgen dos nuevas variables (pediente y valor máximo) por cada
+índice, la tabla \ref{tab:fulldataset} presenta la estructura del conjunto de datos resultante de la 
+integración mostrada anteriormente. Este dataset consolidado reúne en un mismo formato las variables agronómicas junto con 
+los indicadores derivados de los índices de vegetación. De esta manera, se dispone de una base de datos
+unificada que permite analizar la relación entre las características fenológicas del cultivo y las
+condiciones observadas mediante teledetección.
+
+
+	\begin{table}[h]
+		\centering
+		\caption{Estructura de archivo con datos de cultivo y satélite.}
+    \footnotesize
+		\begin{tabular}{l c c c c c c c}    
+			\toprule
+			\textbf{\#} & \textbf{ID} & \textbf{año} & \textbf{dia-floracion} & \textbf{dia-cosecha} & \textbf{evi-median} & \textbf{\dots} & \textbf{pico-evi} \\
+			\midrule
+			0 & clv2 & 2017 & 60 & 151 & 0,3 & \dots & 0,2 \\		
+			1 & clv3 & 2018 & 30 & 153 & 0,4 & \dots & 0,1 \\
+			2 & clv5 & 2019 & 65 & 231 & 0,2 & \dots & 0,4 \\
+      \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots \\
+      6749 & Flam Art & 2023 & 26 & 173 & 0,5 & \dots & 0,5 \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:fulldataset}
+	\end{table}
+
+
+\section{Arquitectura de inteligencia artificial}
+
+Una vez consolidada la totalidad de los datos provenientes de las diferentes fuentes, se implementa una cadena de procesamiento
+que puede dividirse en dos etapas principales. Por un lado, se desarrolla el monitoreo previo a la floración, que consiste 
+en el análisis temporal de los índices de vegetación con el objetivo de caracterizar el estado fenológico de los cultivos 
+antes del evento de floración. Por otro lado, se aplican de modelos de aprendizaje automático, 
+orientado a la predicción de la fecha de floración a partir de las variables derivadas del monitoreo satelital y 
+de los registros agronómicos.
+
+En la figura \ref{fig:pipeline-procesamiento} se presenta el flujo general del proceso, que 
+inicia con la entrada de los datos integrados y continúa con la caracterización de los cultivos
+mediante mapas de índices de vegetación. Para el análisis previo a la floración se consideran 
+únicamente los registros del período anterior al evento. 
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./Figures/pipeline-procesamiento.png}
+	\caption{Arquitectura de inteligencia artificial propuesta\protect\footnotemark.}
+	\label{fig:pipeline-procesamiento}
+\end{figure}
+\footnotetext{Imagen de elaboración propia.}

@@ -1,0 +1,155 @@
+% Chapter 1
+
+\chapter{Introducción general} % Main chapter title
+
+\label{Chapter1} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+\label{IntroGeneral}
+
+En este capítulo se introduce la problemática y se interpreta la importancia que
+implica el trabajo propuesto. Luego, se realiza un análisis del estado de arte sobre la gestión 
+eficiente de salud de cultivos y predicción de floración en durazneros. Finalmente, se 
+puntualizan los objetivos y el alcance del trabajo.
+
+
+
+%----------------------------------------------------------------------------------------
+
+% Define some commands to keep the formatting separated from the content 
+\newcommand{\keyword}[1]{\textbf{#1}}
+\newcommand{\tabhead}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{\bfseries#1}}
+\newcommand{\option}[1]{\texttt{\itshape#1}}
+\newcommand{\grados}{$^{\circ}$}
+
+%----------------------------------------------------------------------------------------
+
+%\section{Introducción}
+
+%----------------------------------------------------------------------------------------
+\section{Contexto del trabajo}
+
+En la EEA San Pedro de INTA se busca intensificar de manera sustentable la producción
+de frutales, hortalizas y viveros. Actualmente, la inspección y evaluación
+dependen de visitas de campo y observaciones manuales, procesos costosos, laboriosos
+ y con alcance limitado. Además, el cambio climático y la variabilidad
+meteorológica añaden capas adicionales de complejidad la gestión agronómica.
+
+El Laboratorio de Biotecnología cuenta con datos históricos sobre las etapas de
+floración y cosecha de frutos en durazneros. En este contexto, las imágenes
+satelitales se presentan como una herramienta poderosa, ya que ofrecen datos
+consistentes y de amplia cobertura, permiten evaluar la vegetación de forma
+precisa y objetiva mediante índices especializados.
+
+El objetivo de este trabajo es automatizar la gestión de montes frutales y la predicción de la fecha 
+de floración a partir de datos disponibles e índices derivados de imágenes satelitales. Para ello, 
+se emplean métodos de aprendizaje automático junto con técnicas de preprocesamiento de imágenes. Se 
+propone el desarrollo de una herramienta accesible para los usuarios, que permita optimizar los 
+resultados y reducir el tiempo y esfuerzo requeridos en el proceso.
+
+En la Figura \ref{fig:flujotesis} se puede observar el flujo de información que integra
+las etapas de procesamiento de imágenes y entrenamiento de modelos predictivos planteadas para este trabajo.
+
+\pagebreak
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./Figures/flujo_tesis_tffb.png}
+	\caption{Diagrama de preproceso de datos y entrenamiento predictivo.}
+	\label{fig:flujotesis}
+\end{figure}
+
+\pagebreak
+
+
+\section{Estado del arte}
+
+En los últimos años, la recopilación masiva de datos agrícolas ha transformado la 
+toma de decisiones en la gestión de cultivos, lo que ha permitido optimizar su salud
+y rendimiento. Las etapas fenológicas de la vegetación actúan como
+indicadores importantes en el seguimiento del crecimiento de la vegetación y la evaluación de cómo 
+el cambio climático puede afectar a la vegetación. 
+
+La disponibilidad de datos obtenidos mediante teledetección con altas resoluciones espaciales y espectrales permite 
+utilizar modelos de aprendizaje automático y aprendizaje profundo para apoyar la toma de decisiones
+en la agricultura \citep{YEM2023}. La fenología precisa de las plantas es crucial para la producción y las
+operaciones agrícolas porque guía cronogramas específicos para la fertilización, el riego, el control de plagas, la 
+cosecha y la reproducción \citep{ML2022}.
+
+
+\subsection{Importancia de la teledetección en la agricultura}
+La teledetección cumple un papel fundamental en la agricultura, proporciona información valiosa sobre
+el estado de los cultivos, las condiciones ambientales y las prácticas de manejo de suelo. Su 
+relevancia radica en su capacidad para recopilar datos sobre grandes extensiones de forma rápida, no invasiva 
+y frecuente, lo que permite a los agricultores, investigadores y responsables políticos tomar decisiones informadas 
+y optimizar la productividad agrícola. A continuación, se describen algunos aspectos que destacan la importancia 
+de la teledetección en este ámbito:
+
+\begin{itemize}
+  \item Monitoreo y gestión de cultivos: La teledetección permite el monitoreo sistemático de la salud y el crecimiento de
+        los cultivos a lo largo de la temporada de cultivo. Mediante el análisis de imágenes multiespectrales, 
+        los agricultores pueden detectar signos tempranos de estrés, deficiencias nutricionales, infestaciones de plagas y enfermedades, 
+        lo que permite una intervención oportuna para mitigar posibles pérdidas de rendimiento. Este enfoque proactivo de la gestión de 
+        los cultivos ayuda a optimizar la asignación de recursos, como el agua, los fertilizantes y los pesticidas, lo que se traduce en 
+        un aumento del rendimiento y una mayor eficiencia en el uso de los recursos \citep{Kumar}.
+  \item Predicción y evaluación del rendimiento: Los datos de teledetección, combinados con técnicas analíticas avanzadas,
+        pueden utilizarse para predecir el rendimiento de los cultivos y evaluar la variabilidad del rendimiento en los campos.
+        Mediante el análisis de índices de vegetación y modelos de estimación de biomasa derivados de imágenes satelitales 
+        o de drones, los agricultores pueden anticipar las fluctuaciones del rendimiento, optimizar los calendarios de cosecha
+        y tomar decisiones informadas sobre la comercialización \citep{Kumar}.
+\end{itemize}
+
+
+\subsection{Monitoreo de la salud de cultivos}
+A continuación, se presentan estudios enfocados en durazneros realizados en la región pampeana y patagónica de Argentina:
+\begin{itemize}
+  \item El trabajo titulado \textit{La variación temporal del índice NDVI predice los cambios temporales de la cobertura vegetal en las tierras secas de la Patagonia argentina}
+        demuestra que las series temporales de índices de vegetación derivados de sensores satelitales y productos de mediana resolución, combinadas con mediciones de campo 
+        y modelos estadísticos, son herramientas útiles para monitorear el estado vegetativo de huertos
+        de duraznero, detectar variaciones intraestacionales y apoyar la identificación de etapas fenológicas relevantes para la
+        floración \citep{Patagonia2021}.
+  \item El estudio \textit{Phenology and reproductive traits of peaches and nectarines in Central-East Argentina} describe los patrones fenológicos, la densidad de 
+        floración y los rasgos reproductivos de distintas variedades de duraznero y nectarina en la región pampeana. Los autores analizan la variabilidad entre 
+        cultivares y años, y discuten cómo los factores ambientales y las prácticas de manejo influyen en la ocurrencia y sincronía de la 
+        floración. Los resultados aportan series temporales y relaciones entre cultivares y clima que resultan útiles para la parametrización
+        de modelos fenológicos, por ejemplo, para estimar las fechas de plena floración a partir de acumulados térmicos o del cumplimiento de 
+        los requerimientos de frío, lo que convierte a este trabajo en una fuente local altamente pertinente para la predicción de la floración del duraznero \citep{Gariglio2006}.
+  \item El trabajo \textit{Comparison of methods for estimation of chilling and heat requirements of nectarine and peach genotypes for flowering} compara distintos modelos 
+        y métodos para estimar los requerimientos de frío y de acumulación térmica necesarios para la apertura de yemas florales en genotipos de nectarina y
+        genotipos de duraznero cultivadas en Argentina. Al evaluar y contrastar fórmulas para contabilizar horas/fríos efectivos y distintas curvas de 
+        acumulación térmica, el estudio proporciona parámetros y recomendaciones prácticas para ajustar modelos fenológicos locales que predicen la fecha de floración según las 
+        condiciones climáticas de la región pampeana argentina \citep{Maulion2014}.
+      \end{itemize}
+
+\section{Alcance y Objetivos}
+
+El objetivo principal de este trabajo fue desarrollar un algoritmo que permita descargar y analizar imágenes satelitales con el fin
+de vincularlas a características fenológicas de los durazneros. Se buscó determinar a partir de los 
+datos disponibles, el avance de las etapas de floración y maduración de los frutos, así como explorar información satelital 
+relevante para la predicción de la fecha de floración.
+
+
+\subsection{Alcance del proyecto}
+A continuación, se detallan las actividades incluidas en este trabajo:
+
+\begin{itemize}
+  \item Evaluación de las diferentes fuentes de datos disponibles:
+  \begin{itemize}
+    \item Datos tabulares, que corresponden a mediciones de campo
+    de las etapas de floración y cosecha de frutos, obtenidos durante 5
+    años.
+    \end{itemize}
+  \item La descarga de imágenes satelitales, correspondientes a parcelas de durazneros monitoreados. 
+  \item La determinación del progreso de las etapas de floración y maduración de
+  los frutos en el duraznero.
+  \item La exploración de información satelital en etapa de crecimiento para anticipar la fecha de floración.
+  \item El desarrollo de una herramienta de fácil acceso para el equipo del cliente.
+  \item La elaboración de un informe que detalle el procedimiento realizado y los resultados obtenidos.  
+  \end{itemize}
+
+  Los siguientes elementos quedan fuera del alcance del presente trabajo:
+  \begin{itemize}
+    \item El desarrollo de una interfaz web para el sistema.
+    \item El despliegue del desarrollo en un entorno de producción.
+    \end{itemize}
+
