@@ -1,0 +1,334 @@
+% Chapter Template
+
+\chapter{Ensayos y resultados} % Main chapter title
+En este capítulo se presentan los ensayos realizados y los resultados obtenidos a lo largo del desarrollo 
+del estudio. En primer lugar, se describe la caracterización de los montes frutales, considerando las 
+particularidades de las áreas de estudio y las variables que permiten representar su estado vegetativo
+y fenológico. Posteriormente, se aborda la predicción de la floración del duraznero, donde se detalla
+el conjunto de datos utilizado, el diseño experimental adoptado y las métricas empleadas. Además, 
+se incluye la descripción de los esquemas de validación, tanto a nivel global como por lotes. 
+Finalmente, se presentan los resultados obtenidos y su interpretación, destacando los comportamientos
+observados y la relación entre las variables analizadas. 
+
+\label{Chapter4} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Caracterización de montes frutales}
+
+Con el propósito de monitorear el estado de los cultivos en los meses previos a la floración, 
+se llevaron a cabo diversas visualizaciones de los índices de vegetación, con el fin de analizar
+y comprender en mayor profundidad su comportamiento temporal. Estos índices permiten identificar
+variaciones en la actividad fotosintética y en la cobertura vegetal, proporcionando una 
+herramienta clave para anticipar el desarrollo fenológico de los frutales.
+
+Tal como se muestra en la figura \ref{fig:evolucion-indices}, el análisis previo a la floración 
+evidencia patrones de incremento progresivo en los valores de los índices, reflejando la dinámica 
+fisiológica de los cultivos durante la fase de crecimiento vegetativo.
+
+Complementariamente, en las figuras \ref{fig:densidad-uno} 
+y \ref{fig:densidad-dos} se presentan las distribuciones de los valores pico
+de los índices de vegetación correspondientes al período previo a la floración de los durazneros,
+discriminados por año. Esta comparación permite observar diferencias interanuales en la magnitud 
+y variabilidad de los índices, posiblemente asociadas a factores ambientales o de manejo del cultivo.
+Dicho análisis contribuye a una caracterización más precisa del comportamiento de la vegetación
+en las etapas críticas del ciclo fenológico.
+\clearpage
+\vspace*{\fill}
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{./Figures/indices_densidad_1.png}
+	\caption{Distribución de los valores pico de índices de vegetación previos a la floración.}
+	\label{fig:densidad-uno}
+\end{figure}
+\vspace*{\fill}
+\clearpage
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{./Figures/indices_densidad_2.png}
+	\caption{Distribución de los valores pico de índices de vegetación previos a la floración.}
+	\label{fig:densidad-dos}
+\end{figure}
+\clearpage
+Se observa que los años 2017, 2018 y 2019 presentan distribuciones más concentradas y con
+menores valores medios para la mayoría de los índices, lo que sugiere condiciones 
+previas a la floración caracterizadas por un menor vigor vegetativo o menor cobertura
+verde. En contraste, los años más recientes desde 2020 a 2023, muestran desplazamientos 
+hacia valores más altos en la densidad de probabilidad, esto indica un mayor desarrollo 
+vegetativo en los meses previos a la floración.
+
+Análisis por índice:
+\begin{itemize}
+    \item EVI: presenta valores bajos, aunque
+     con una ligera tendencia creciente en 2022-2023, indica una mejora en la 
+     actividad fotosintética previa a la floración. Este índice es sensible al vigor 
+     de la vegetación y sugiere una respuesta positiva en los últimos años.
+     \item ARVI: las distribuciones 
+     de los años 2021-2023 se desplazan hacia valores más altos respecto a 2017-2019, 
+     lo que podría asociarse a un aumento en la cobertura verde y reducción del estrés
+      vegetal.
+    \item RVI y RDVI: ambos índices presentan un comportamiento similar, con picos 
+    de densidad de 0,3 a 0,5 y una dispersión moderada. En los años más 
+    recientes se observa una mayor concentración de valores medios-altos, esto refleja 
+    una mejora gradual del vigor vegetal.
+    \item LCI y NDRE : muestran una clara diferenciación entre años. Los valores de 
+        2021-2023 se agrupan en rangos más altos 0,5 a 0,7 lo que sugiere una mayor
+         concentración de clorofila y hojas más activas antes de la floración.
+    \item GNDVI: mantiene una distribución 
+     levemente bimodal en la mayoría de los años, con un segundo pico en torno de 0,6 a 0,7
+      en los últimos años, lo cual puede reflejar una heterogeneidad en el desarrollo del 
+     follaje del lote.
+     \item SIPI: presenta un desplazamiento 
+     progresivo hacia valores más altos desde 2020, lo que indica una mejora en
+      la relación entre pigmentos fotosintéticos y estructurales, asociada a un estado
+       vegetativo más activo.
+\end{itemize}
+
+\section{Predicción de floración de duraznero}
+Esta sección aborda la evaluación de modelos predictivos orientados a estimar la fecha de floración 
+del duraznero. Se incluyen la descripción del conjunto de datos, las métricas empleadas para 
+evaluar el rendimiento de los modelos y los procedimientos de validación tanto a nivel global como por lotes.
+
+\subsection{Descripción de conjunto datos}
+
+Para iniciar con la predicción de floración, con el objetivo de garantizar una evaluación realista del 
+comportamiento predictivo del modelo en escenarios futuros, la partición de los datos se realizó respetando
+el orden temporal de las observaciones. Los registros correspondientes al período 2017-2022 se utilizaron 
+para el entrenamiento del modelo, mientras que los datos del año 2023 se reservaron como conjunto de validación, 
+la tabla \ref{tab:splitdata} muestra en detalle el total de cada conjunto. 
+Esta estrategia evita la fuga de información entre conjuntos conocida como \textit{data leakage} y permite simular condiciones 
+de predicción operativa, en las que se dispone de información histórica para estimar la floración de campañas
+posteriores. 
+
+Luego, se realizó un proceso de codificación sobre la variable ID, para transformar valores categóricos en números 
+enteros únicos, asignando un número diferente a cada identificador distinto. Esta variable se mantuvo en el 
+entrenamiento de los modelos con el objetivo de evaluar el comportamiento de los algoritmos tanto por parcela 
+individual como de forma global, teniendo en cuenta su identificación específica.
+
+
+\begin{table}[h]
+		\centering
+		\caption{\textit{Split} de datos para regresión.}
+		\begin{tabular}{l c c c}    
+			\toprule
+			\textbf{Periodo} & \textbf{Total} & \textbf{Conjunto} & \textbf{Descripción} \\
+			\midrule
+			2017 - 2022 & 4988 & Entrenamiento & Ajuste del modelo para predicción \\		
+			2023 & 1504 & Validación & Evaluación del desempeño \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:splitdata}
+\end{table}
+
+\subsection{Diseño experimental y métricas seleccionadas}
+
+En el proceso de selección de modelos, se optó por seguir un enfoque incremental, avanzando desde algoritmos 
+simples hacia otros de mayor complejidad. En una primera etapa, se implementó un modelo basado en árboles de
+decisión, con el objetivo de establecer una línea base y comprender el comportamiento
+general de los datos. Posteriormente, se incorporaron modelos de tipo ensemble, que combinan múltiples árboles de decisión para 
+mejorar la capacidad predictiva y reducir el sobreajuste. Dentro de este grupo, se evaluaron Random Forest,
+Gradient Boosting, LGBM y XGBoost, los cuales difieren principalmente en la forma en 
+que agregan y ponderan los árboles individuales, así como en su eficiencia computacional.
+
+Haciendo un breve repaso de las parcelas, es importante recordar que, este estudio se
+centra en la especie \textit{Prunus persica} (duraznero) donde cada parcela corresponde a una
+única variedad, entendida como familias de árboles. 
+
+Además de evaluar el desempeño global de los modelos, con el objetivo de obtener una evaluación más precisa, se implementó una estrategia de
+validación por lotes. En este esquema:
+\begin{itemize}
+    \item El entrenamiento se realizó excluyendo al azar determinadas variedades, y posteriormente se evaluó utilizando 
+            todas las variedades, incluidas aquellas que no habían sido vistas durante el entrenamiento.
+    \item Se analizó la dispersión del error del modelo XGBoost para las distintas variedades, con el propósito de 
+          identificar posibles diferencias en su desempeño según la parcela.
+\end{itemize}
+
+Esta metodología permite, por un lado, evaluar la capacidad del modelo para mantener un rendimiento consistente de 
+generalización frente a datos nuevos, como nuevas variedades o registros provenientes de una campaña agrícola diferente y, por
+otro, examinar en detalle el patrón de error dentro de cada lote, aportando una visión más completa sobre su estabilidad y robustez.
+
+Con respecto a la evaluación del rendimiento de los modelos de predicción y con la intención de seleccionar la más adecuada, se utilizaron métricas de error ampliamente
+utilizadas en problemas de regresión. En particular, se calcularon el error cuadrático medio (MSE), el coeficiente de determinación R² y la 
+raíz del error cuadrático medio (RMSE) los cuales permiten cuantificar el ajuste del modelo y la magnitud de los errores de predicción. A 
+continuación, se muestran las ecuaciones para obtener cada uno: 
+
+\begin{equation}
+\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+\label{eq:mse}
+\end{equation}
+
+\begin{equation}
+\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
+\label{eq:rmse}
+\end{equation}
+
+\begin{equation}
+R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}
+\label{eq:r2}
+\end{equation}
+
+En estas expresiones, $n$ representa el número de observaciones analizadas, que en este estudio corresponde a 4988 muestras para el conjunto 
+de entrenamiento y 1504 muestras para el conjunto de validación. Los valores $y_i$ hacen referencia a las fechas reales de floración registradas 
+en cada parcela, mientras que $\hat{y}_i$ corresponde a las fechas estimadas por los modelos de regresión. Finalmente, $\bar{y}$ representa la
+media de las fechas reales de floración consideradas en el conjunto utilizado para la evaluación.
+
+
+\subsection{Validación de pruebas}
+\subsubsection{Esquema de validación global}
+Luego del entrenamiento de los modelos, siguiendo el flujo descripto en la sección anterior, se obtuvieron las 
+métricas de validación que se pueden ver en la tabla \ref{tab:metrics-general}.
+
+\begin{table}[h]
+		\centering
+		\caption{Métricas de \textit{performance} de algoritmos basados en árboles.}
+		\begin{tabular}{l c c c}    
+			\toprule
+			\textbf{Modelo} & \textbf{MSE} & \textbf{RMSE} & \textbf{R²} \\
+			\midrule
+			Desicion Tree& 13,73 & 3,70 & 0,32\\		
+			Random Forest& 12,06 & 3,47 & 0,47\\
+            LGBM & 12,78& 3,58 & 0,41\\
+            Gradient Boosting & 13,38 & 3,66 & 0,35\\
+            XGBoost & 12,18 & 3,49 & 0,46\\
+			\bottomrule
+		\end{tabular}
+		\label{tab:metrics-general}
+\end{table}
+Los modelos basados en ensambles, Random Forest y XGBoost mostraron el mejor desempeño, 
+alcanzando los menores errores de RMSE y los mayores valores de R², lo que sugiere una adecuada capacidad para
+capturar los patrones asociados a la floración. 
+
+Por otro lado, el resto de los modelos presentaron un desempeño ligeramente inferior. En particular, el modelo 
+Decision Tree mostró una menor capacidad de generalización, evidenciando una mayor variabilidad en las predicciones.
+Los modelos Gradient Boosting y LGBM alcanzaron resultados intermedios, con errores moderados, lo que indica que 
+si bien lograron capturar parcialmente la relación entre las variables predictoras y la floración, su ajuste 
+fue menos estable en comparación con los métodos de ensamble más robustos.
+
+La figura \ref{fig:errores-modelos} ilustra la distribución de los errores para los cinco modelos de regresión bajo
+estudio. 
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/errores_modelos.png}
+	\caption{\textit{Boxplot} de errores por modelo.}
+	\label{fig:errores-modelos}
+\end{figure}
+
+Se observa que la mediana (línea dentro de la caja) del error para los cinco modelos es bastante cercana a cero, lo
+que sugiere que en promedio, ninguno de los modelos presenta un sesgo significativo (subestimación o 
+sobreestimación sistemática). 
+
+El modelo Gradient Boosting parece tener una mediana ligeramente más positiva, en comparación con 
+DecisionTree. En términos de variabilidad y consistencia, los modelos RandomForest y LGBM
+presentan una dispersión intercuartílica (tamaño de la caja) similar y relativamente estrecha, 
+indicando una consistencia aceptable en sus errores. Por otro lado, todos los modelos muestran la
+presencia \textit{outliers}, especialmente DecisionTree y XGBoost en el extremo 
+inferior, lo que indica que existen algunas predicciones con errores grandes en la muestra de datos.
+\clearpage
+\subsubsection{Esquema de validación por lotes}
+Para esta instancia de validación del modelo, se optó por excluir un conjunto de parcelas específicas
+del proceso de entrenamiento, con el objetivo de evaluar la capacidad de generalización y la
+robustez del modelo frente a datos no vistos. Se dejaron fuera las parcelas identificadas 
+como FTemTJ, cgd214, cgd287, clv17, htb37, FlavGom y cgd246.
+
+Los resultados obtenidos a partir de esta validación independiente se presentan en la tabla
+\ref{tab:metrics-idexcluded}, donde se detallan las métricas de evaluación correspondientes.
+
+\begin{table}[h]
+		\centering
+		\caption{Métricas de error con variedades excluidas.}
+		\begin{tabular}{l c c}
+			\toprule
+			\textbf{Modelo} & \textbf{MSE} & \textbf{RMSE} \\
+			\midrule
+			Desicion Tree& 16,02 & 4,0 \\		
+			Random Forest& 14,02 & 3,74 \\
+            LGBM & 12,98 & 3,59\\
+            Gradient Boosting & 13,7 & 3,71 \\
+            XGBoost & 13,6 & 3,70 \\
+			\bottomrule
+		\end{tabular}
+		\label{tab:metrics-idexcluded}
+\end{table}
+
+Al comparar los resultados globales con los obtenidos tras excluir las cinco parcelas,
+se observa que los errores aumentan ligeramente en todos los modelos, lo que 
+indica una menor capacidad de generalización al enfrentarse a datos no vistos durante el 
+entrenamiento. El modelo LGBM mostró el error más bajo, sugiriendo una mayor robustez ante la
+omisión de variedades de durazneros específicas en comparación con los otros modelos 
+de ensemble. En contraste, Decision Tree presenta el mayor incremento en el error,
+evidenciando su mayor sensibilidad a los cambios en los datos de entrenamiento.
+
+
+En la continuación del análisis centrado en las variedades, se seleccionó el modelo 
+XGBoost debido a su alto desempeño en las etapas de validación previas. Este modelo 
+permitió realizar un estudio detallado sobre la magnitud del error asociada a 
+cada variedad, como se observa en la figura \ref{fig:error-bestmodel}.
+\clearpage
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./Figures/error_best_model.png}
+	\caption{\textit{Parity plot} del modelo XGBoost.}
+	\label{fig:error-bestmodel}
+\end{figure}
+
+Observando la distribución de los puntos:
+\begin{itemize}
+    \item Tendencia general: los puntos se agrupan en general cerca de la línea de predicción 
+    perfecta, lo que sugiere que el modelo  tiene una buena capacidad predictiva en la mayoría 
+    de las parcelas. La tendencia general de las predicciones sigue la tendencia de los datos 
+    reales. 
+    \item Dispersión: en la parte inferior izquierda (floración temprana, días julianos 30-40), el modelo 
+    parece tener algunos de sus errores más grandes. Por ejemplo, un caso donde la fecha real 
+    es cercana a 35 y la predicción es cercana a 65, lo que representa un gran error de 
+    subestimación de la fecha de floración real. En la parte superior derecha (floración tardía,
+    días julianos 80-90), la precisión parece ser relativamente alta, con muchos puntos muy 
+    cercanos a la línea.
+\end{itemize}
+
+\section{Resultados}
+
+El código implementado demostró un funcionamiento estable sin inconvenientes, permitió la descarga de
+imágenes satelitales correspondientes a cinco años históricos. Asimismo, logró procesar archivos TIFF 
+con una resolución espectral de 14 bandas. Por lo tanto, se cumplieron de manera apropiada los 
+principales requerimientos funcionales establecidos al inicio del proyecto.
+
+En cuanto al monitoreo de cultivos, se logró ver que entre ocho y cuatro semanas antes de la floración,
+varios índices mantienen valores relativamente altos y estable. Algunos índices como ARVI, LCI, NDRE,
+RVI, RDVI, GNDVI muestran fluctuaciones más marcadas, y tienden a moverse en conjunto durante toda
+la etapa observada antes de la floración y alcanzan su pico. En la fecha de floración, los valores 
+de la mayoría de los índices tienden a disminuir levemente o estabilizarse.
+
+En lo que respecta a la predicción de la fecha de floración, en una primera etapa no fue posible
+obtener resultados satisfactorios con los datos en su formato original, tal como se 
+detalla en la tabla \ref{tab:datasetsatelite}. 
+A partir de esta observación, se llevó a cabo una nueva instancia de entrenamiento con 
+las variables derivadas, desarrolladas a partir del procesamiento y transformación de los datos 
+originales, según se describe en la sección \ref{subsubsec:featureengineering}. Estas variables
+generadas permitieron mejorar la representación de la información relevante y, en consecuencia, 
+optimizar la capacidad predictiva de los modelos.
+
+Se concluye que los modelos de ensemble son los que presentan mejores resultados, y las 
+métricas RMSE y R² son buenas opciones para evaluar 
+su rendimiento. Los modelos XGBoost y RandomForest presentan
+resultados muy similares en cuanto a error y bondad de ajuste. A partir de un análisis más 
+detallado de estos modelos, se observaron los siguientes puntos a 
+destacar: 
+
+\begin{itemize}
+    \item Las pendientes de los índices SIPI y ARVI son las que aportan mayor información al proceso
+        de predicción, reflejan una fuerte influencia sobre el desempeño general del modelo. Este 
+        resultado resulta relevante útil para comprender qué variables explican en mayor medida la 
+        variabilidad de la respuesta y favorecen la obtención de predicciones más precisas.
+    \item Si bien los modelos evaluados presentan valores similares en cuanto al error y la bondad 
+        de ajuste, difieren en la importancia que asignan a las variables predictoras. En particular,
+        el modelo Random Forest ubica la variable ID dentro de su conjunto de las tres más importantes,
+        lo cual resulta problemático, dado que dicha variable funciona únicamente como un identificador
+        y no representa un valor biológico asociado al fenómeno estudiado. Este comportamiento
+        sugiere que el modelo podría estar capturando patrones falsos relacionados con la 
+        identificación de las parcelas, en lugar de basarse en las características reales del 
+        cultivo. Considerando este aspecto, y en busca de un balance entre las métricas, 
+        se concluye que el modelo XGBoost ofrece el 
+        mejor desempeño general entre los modelos entrenados.
+\end{itemize}

@@ -1,0 +1,89 @@
+% Chapter Template
+
+\chapter{Conclusiones} % Main chapter title
+
+\label{Chapter5} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+En este capítulo se presentan las conclusiones, los aportes más relevantes del trabajo y las posibles líneas de mejora a futuro.
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Resultados obtenidos}
+A continuación, se resumen las principales actividades realizadas, junto con la forma en que se abordaron 
+los problemas que surgieron durante el desarrollo y los logros obtenidos. 
+
+La planificación se cumplió en cuanto a las actividades, aunque el tiempo de dedicación fue mayor al 
+previsto inicialmente.
+
+Respecto a la gestión de riesgos, se presentaron distintas situaciones:
+
+\begin{itemize}
+    \item Imágenes aéreas sin datos de bandas. Este es un problema que se presentó y no estaba
+    contemplado. Se optó por excluir de la descarga de imágenes aquellas que no tengan
+    las bandas requeridas para el cálculo de los índices.
+    \item Suficiencia de datos. Este aspecto representó uno de los principales riesgos del proyecto.
+     Si bien se logró realizar con éxito la descarga de imágenes satelitales correspondientes a 
+     años históricos, se detectaron limitaciones específicas en el año 2017. En particular, 
+     durante los meses previos a la floración del duraznero, la colección de datos seleccionada
+     presentó amplios intervalos de fechas con imágenes incompletas o carentes de información 
+     en varias bandas espectrales.
+    \item Bajos recursos computacionales. Este aspecto se identificaba inicialmente como un posible
+     riesgo, sin embargo, no representó una limitación en la práctica. Tanto la ejecución del 
+     script para la obtención de imágenes satelitales como el entrenamiento de los modelos pudieron
+      realizarse satisfactoriamente en una computadora personal.
+\end{itemize}
+
+Respecto a los requerimientos:
+
+\begin{itemize}
+    \item Se cumplieron de manera apropiada los funcionales, de manejo de datos, herramientas de
+     codigo y documentación. 
+    \item Caracterización de montes frutales. Esta etapa del trabajo pudo desarrollarse sin 
+    inconvenientes. Si bien se había identificado como posible riesgo la incapacidad del 
+    algoritmo para reconocer correctamente las etapas de floración, el problema no se presentó.  
+    \item La predicción de la fecha de floración no formaba parte de los requerimientos iniciales 
+    del proyecto, sin embargo, se realizó de manera satisfactoria como un aporte adicional. 
+    Durante las primeras pruebas se evidenció que los datos satelitales disponibles no eran 
+    suficientes para obtener resultados precisos, y esto se abordó mediante la ingeniería de
+    características. En la etapa de evaluación de los modelos, la métrica de bondad de ajuste  
+    arrojó un valor inferior al 50\%, lo que indica una capacidad moderada para explicar la 
+    variabilidad de los datos. El equipo del cliente manifestó que, en este estudio, la métrica
+    RMSE tiene mayor relevancia al momento de valorar el desempeño de los modelos, dado que 
+    refleja de manera más directa el error promedio en días de predicción. En la sección \ref{sec:nextsteps}
+    se presentan propuestas de mejora.
+\end{itemize}
+
+Entre los contenidos incorporados a lo largo de la especialización, algunos resultaron fundamentales
+para la ejecución y el enfoque de este trabajo, especialmente los siguientes:
+
+\begin{itemize}
+    \item Análisis exploratorio de datos. Influyó directamente en la toma de decisiones respecto a las
+     metodologías y herramientas aplicadas, además de aportar criterios sólidos para la interpretación
+     y validación de los resultados.
+    \item Aprendizaje de máquina. El aprendizaje sobre preparación y split  de datos, así como sobre métricas
+     de evaluación, resultó de gran utilidad para el desarrollo del trabajo. De los algoritmos abordados
+      durante la especialización, se implementaron modelos basados en árboles de decisión.
+
+\end{itemize}
+%----------------------------------------------------------------------------------------
+%	SECTION 2
+%----------------------------------------------------------------------------------------
+\section{Próximos pasos}
+\label{sec:nextsteps}
+En una primera etapa de este estudio se descargaron imágenes satelitales correspondientes al
+periodo de floración de los montes frutales, con el propósito de analizar el comportamiento
+de los índices de vegetación durante ese momento fenológico. Sin embargo, no fueron 
+utilizadas en el desarrollo de este trabajo, ya que el enfoque se centró en el análisis
+previo a la floración. Estos datos representan un recurso valioso para futuros estudios,
+ya que podrían emplearse para mejorar los modelos actuales.
+
+En cuanto a líneas de trabajo futuras, sería de interés profundizar en la evaluación
+temporal de los modelos mediante técnicas de validación más avanzadas. Entre ellas,
+se propone la aplicación de \textit{rolling window}, que permitiría analizar el
+rendimiento del modelo a lo largo del tiempo, considerando distintos periodos
+de entrenamiento y prueba. Asi como también la implementación de un esquema de
+validación cruzada para series temporales, contribuiría a obtener una estimación
+más robusta del desempeño predictivo.
+
