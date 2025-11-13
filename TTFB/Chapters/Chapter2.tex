@@ -7,22 +7,22 @@
 %----------------------------------------------------------------------------------------
 
 En este capítulo se abordan los conceptos fundamentales que sustentan el desarrollo del trabajo. 
-En primer lugar, se presenta una introducción al aprendizaje supervisado, describiendo sus principales 
-enfoques, como la regresión lineal y los modelos basados en árboles. Luego, se desarrolla el apartado 
+En primer lugar, se presenta una introducción al aprendizaje supervisado y se describen algoritmos 
+como la regresión lineal y los modelos basados en árboles. Luego, se desarrolla el apartado 
 de teledetección, donde se detallan las plataformas utilizadas, las colecciones de datos y las 
 características de las bandas del satélite Sentinel-2. Finalmente, se incluye una sección dedicada 
 al procesamiento de imágenes.
 
-\section{Aprendizaje Supervisado}
+\section{Aprendizaje supervisado}
 En el aprendizaje automático supervisado, los datos anotados conforman el conjunto de entrenamiento, mientras 
 que los datos no anotados integran el conjunto de prueba. Cuando las anotaciones corresponden a valores 
 discretos, se denominan etiquetas de clase, mientras que, si son valores numéricos continuos, se las conoce 
-como valores objetivo continuos. Los problemas de aprendizaje supervisado se dividen, en dos grandes categorías,
+como valores objetivo continuos. Los problemas de aprendizaje supervisado se dividen en dos grandes categorías,
 clasificación y regresión. En el caso de la regresión, el modelo se entrena a partir de un conjunto de datos 
 etiquetados para aprender las relaciones existentes entre las variables y, posteriormente, predecir 
 resultados de valor continuo sobre nuevos datos no observados \citep{mitchell2015}.
 
-\subsection{Regresión Lineal}
+\subsection{Regresión lineal}
 
 La regresión lineal \citep{shetty2022} es uno de los métodos más simples y ampliamente utilizados dentro de los 
 modelos de regresión. Se trata de un enfoque lineal que busca modelar la relación existente entre
@@ -44,12 +44,12 @@ El proceso de entrenamiento del modelo de regresión lineal consiste, en estimar
 entre los datos de entrada y los valores observados.
 
 La figura \ref{fig:lr} muestra el ajuste de la línea de regresión lineal sobre los 
-puntos de datos observados, evidenciando la correspondencia entre el modelo y el comportamiento de las variables.
+puntos de datos observados, lo que evidencia la correspondencia entre el modelo y el comportamiento de las variables.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.6\textwidth]{./Figures/lr.png}
-	\caption{Regresión lineal\protect\footnotemark.}
+	\caption{Ilustración del ajuste de un modelo de regresión lineal sobre un conjunto de datos\protect\footnotemark.}
 	\label{fig:lr}
 \end{figure}
 \footnotetext{Imagen adaptada de \citep{shetty2022}}
@@ -58,31 +58,31 @@ puntos de datos observados, evidenciando la correspondencia entre el modelo y el
 
 Para las tareas de regresión se utilizan diversos algoritmos, entre ellos, los modelos basados en árboles que son algoritmos de aprendizaje supervisado que usan estructuras tipo árbol para dividir
 datos y hacer predicciones. Los árboles simples siguen reglas de sí/no
-hasta formar grupos homogéneos, siendo fáciles de interpretar y manejando distintos tipos de variables.
-Se puede categorizar en árboles de decisión individuales, métodos de ensamble que combinan múltiples árboles, 
+hasta formar grupos homogéneos, ofrecen una interpretación sencilla y admiten distintos tipos de variables.
+Se pueden categorizar en árboles de decisión individuales, métodos de ensamble que combinan múltiples árboles, 
 y otras variantes basadas en \textit{boosting}. A continuación, se detallan los utilizados en este trabajo: 
 
 \begin{itemize}
-	\item \textit{Decision Tree Regressor}: es un modelo que predice un valor continuo dividiendo recursivamente el conjunto
+	\item \textit{Decision Tree Regressor} \citep{dtr}: es un modelo que predice un valor continuo divide recursivamente el conjunto
 	de datos. En cada división, busca la característica que mejor reduce la varianza de la variable objetivo. 
-	\item \textit{Random Forest Regressor}: introduce aleatoriedad al considerar solo un subconjunto de características 
+	\item \textit{Random Forest Regressor} \citep{rfr}: introduce aleatoriedad al considerar solo un subconjunto de características 
 	para cada división. Construye un gran número de árboles de decisión individuales, entrenando cada uno en una 
 	submuestra del conjunto de datos seleccionada con reemplazo.
-	\item \textit{LGBM Regressor}: utiliza la técnica de crecimiento de árboles \textit{leaf-wise} (por hoja), enfocándose en hojas con la mayor pérdida a optimizar. Tiene alta 
+	\item \textit{LGBM Regressor} \citep{lgbm}: utiliza la técnica de crecimiento de árboles \textit{leaf-wise} (por hoja), enfocándose en hojas con la mayor pérdida a optimizar. Tiene alta 
 	eficiencia y velocidad, especialmente en grandes conjuntos de datos.
-	\item \textit{Gradient Boosting Regressor}: construye un modelo aditivo en una moda gradual \textit{stage-wise}, cada árbol intenta corregir 
+	\item \textit{Gradient Boosting Regressor} \citep{gbr}: construye un modelo aditivo en una moda gradual \textit{stage-wise}, cada árbol intenta corregir 
 	secuencialmente los errores residuales del conjunto de árboles predecesores para mejorar la predicción general.
-	\item \textit{XGB Regressor}: este modelo incluye métodos de regularización para controlar el sobreajuste, el uso de una aproximación de 
+	\item \textit{XGB Regressor} \citep{xgbr}: este modelo incluye métodos de regularización para controlar el sobreajuste, el uso de una aproximación de 
 	segundo orden (Taylor) de la función de pérdida (Hessiano) para una optimización más precisa y el soporte para el procesamiento paralelo. 
 	Es conocido por ofrecer resultados de vanguardia en tareas de regresión.
 \end{itemize}
 
-Las librerías \textit{XGBoost}\citep{xgboost} y \textit{scikit-learn}\citep{scikitlearn} implementan los algoritmos mencionados.
+Las bibliotecas \texttt{XGBoost} \citep{xgboost} y \texttt{scikit-learn} \citep{scikitlearn} implementan los algoritmos mencionados.
 
 \section{Teledetección}
 
 La teledetección ha sido reconocida como una importante fuente de información durante las
-últimas décadas en una amplia gama de aplicaciones de observación de la tierra. La
+últimas décadas en una amplia gama de aplicaciones de observación de la Tierra. La
 periodicidad se considera el requisito más importante, ya que su cumplimiento permite 
 abordar los problemas identificados en tiempo real. Durante la última década, estos
 requisitos se han cumplido cada vez más gracias a una flota de satélites de reconocimiento
@@ -115,7 +115,7 @@ costosa, la observación de la tierra presenta una alternativa viable \citep{Str
 \subsection{Plataformas de teledetección}
 \label{subsec:plataformas}
 En la tabla \ref{tab:plataformas} se presentan plataformas de teledetección disponibles y requisitos sugeridos 
-(*marginal, **óptimo) para supervisar la fenología de la floración forestal\citep{Dixon2023}.
+(*marginal, **óptimo) para supervisar la fenología de la floración forestal \citep{Dixon2023}.
 		
 \begin{table}[h]
 	\centering
@@ -134,7 +134,7 @@ En la tabla \ref{tab:plataformas} se presentan plataformas de teledetección dis
 
 \subsection{Colecciones de datos}
 
-El Programa Copernicus \citep{copernicus}, una iniciativa conjunta de la Comisión Europea y la Agencia Espacial Europea (ESA), se implementa a través 
+El programa Copernicus \citep{copernicus}, una iniciativa conjunta de la Comisión Europea y la Agencia Espacial Europea (ESA), se implementa a través 
 de la constelación de satélites Sentinel, desarrollados por la ESA. Estos satélites ofrecen una amplia gama de datos, que incluye:
 imágenes de radar (Sentinel-1A/1B), imágenes ópticas de alta resolución (Sentinel-2A/2B), datos de monitoreo ambiental y 
 climático para océanos y tierras (Sentinel-3), y datos sobre la calidad del aire (Sentinel-5P).
@@ -143,10 +143,10 @@ climático para océanos y tierras (Sentinel-3), y datos sobre la calidad del ai
 \label{subsec:bandas}
 \begin{table}[!htpb]
   \centering
-  \caption{Bandas espectrales de Sentinel-2 \citep{Sentinel2}}
+  \caption{Bandas espectrales de Sentinel-2 \citep{Sentinel2}.}
   \begin{tabular}{l c c c}    
     \toprule
-     \textbf{Nombre} & \textbf{Longitud de onda} & \textbf{Resolución (m)}\\
+     \textbf{Nombre} & \textbf{Longitud de onda ($\mu$m)} & \textbf{Resolución (m)}\\
     \midrule
 	B1 - Aerosol & 0,43 - 0,45 & 60 \\
     B2 - Azul & 0,45 - 0,52 & 10  \\		
@@ -194,47 +194,30 @@ A continuación, se presentan índices de vegetación relevantes para este traba
 
 \begin{itemize}
 	\item \textit{Normalized Difference Vegetation Index} (NDVI) \citep{Xue2017}: se calcula como 
-	   	relación normalizada entre las bandas roja e infrarroja cercana. Tiene una reacción sensible a la vegetación verde, incluso en zonas con cobertura 
-		vegetal escasa, es sensible a los efectos del brillo y color del suelo,
+	   	relación normalizada entre las bandas roja e infrarroja cercana. Tiene una reacción sensible a la vegetación verde,
+		 incluso en zonas con cobertura vegetal escasa, es sensible a los efectos del brillo y color del suelo,
 		la atmósfera, las nubes y la sombra de las nubes, y la sombra del dosel foliar.
-	\item \textit{Enhanced Vegetation Index} (EVI) \citep{Xue2017}: corrige los efectos del suelo y de la atmósfera. Su formulación incluye los valores de NIR,
-		 $R$ y $B$. El término $L$ representa un parámetro de ajuste asociado
+	\item \textit{Enhanced Vegetation Index} (EVI) \citep{Xue2017}: corrige los efectos del suelo y de la atmósfera. Su formulación 
+		incluye los valores de NIR, R y B. El término L representa un parámetro de ajuste asociado
 		  al suelo, cuyo valor se establece en 1. Además, se incorporan dos parámetros constantes con valores de 6 y 
 		  7.5, respectivamente.
 	\item \textit{Atmospherically Resistant Vegetation Index} (ARVI) \citep{Xue2017}: se utiliza para eliminar los efectos de los
-		aerosoles atmosféricos. Se basa en el supuesto de que la atmósfera afecta significativamente a $R$ en comparación con el 
+		aerosoles atmosféricos. Se basa en el supuesto de que la atmósfera afecta significativamente a R en comparación con el 
 		NIR y reduce la dependencia de este índice de vegetación de los efectos atmosféricos. 
-	\item \textit{Renormalized Difference Vegetation Index} (RDVI) \citep{vescovo2012}: su objetivo es linealizar las relaciones entre el índice, los parámetros biofísicos y reducir el efecto de saturación en coberturas altas. Utiliza las bandas infrarrojo cercano
+	\item \textit{Renormalized Difference Vegetation Index} (RDVI) \citep{vescovo2012}: su objetivo es linealizar las relaciones entre 
+		el índice, los parámetros biofísicos y reducir el efecto de saturación en coberturas altas. Utiliza las bandas infrarrojo cercano
 		 y roja.
-	\item \textit{Green Normalized Difference Vegetation Index} (GNDVI) \citep{gndvi}: es una variante del NDVI que sustituye la banda roja por la banda verde, esta 
-		modificación permite una mayor sensibilidad al contenido de clorofila y a la absorción del nitrógeno en el follaje.
-	\item \textit{Structure Insensitive Pigment Index} (SIPI) \citep{vi}: se usa para monitorear la salud de las plantas en regiones con alta variabilidad en la estructura del dosel o el índice de área foliar, 
+	\item \textit{Green Normalized Difference Vegetation Index} (GNDVI) \citep{gndvi}: es una variante del NDVI que sustituye 
+		la banda roja por la banda verde, esta modificación permite una mayor sensibilidad al contenido de clorofila y a la 
+		absorción del nitrógeno en el follaje.
+	\item \textit{Structure Insensitive Pigment Index} (SIPI) \citep{vi}: se usa para monitorear la salud de las plantas en 
+		regiones con alta variabilidad en la estructura del dosel o el índice de área foliar, 
 		para la detección temprana de enfermedades de las plantas u otras causas de estrés.
-	\item \textit{Normalized Difference Red Edge Index} (NDRE) \citep{ndre}: es un método para medir la cantidad de clorofila en las plantas. Su aplicación resulta eficaz hacia la mitad o el final del ciclo de cultivo, cuando las plantas 
+	\item \textit{Normalized Difference Red Edge Index} (NDRE) \citep{ndre}: es un método para medir la cantidad de clorofila 
+	en las plantas. Su aplicación resulta eficaz hacia la mitad o el final del ciclo de cultivo, cuando las plantas 
 	alcanzan su madurez y se encuentran próximas a la cosecha.
-	\item \textit{Leaf Chlorophyll Index} (LCI) \citep{nata2021}: es un índice de vegetación que involucra la banda lateral roja, que utiliza las características de reflectancia espectral de la banda lateral roja
-	 y la banda del infrarrojo cercano para mostrar las diferencias en el contenido de clorofila .  
+	\item \textit{Leaf Chlorophyll Index} (LCI) \citep{nata2021}: es un índice de vegetación que involucra la banda lateral roja,
+	 que utiliza las características de reflectancia espectral de la banda lateral roja
+	 y la banda del infrarrojo cercano para mostrar las diferencias en el contenido de clorofila.  
 \end{itemize}
 
-En la tabla \ref{tab:tab-indices} se incluye un resumen de los principales índices de vegetación analizados en este trabajo, junto con sus 
-respectivas referencias.
-
-\begin{table}[h]
-  \centering
-  \caption{Resumen de expresiones de índices de vegetación.}
-  \begin{tabular}{l c c}
-    \toprule
-    \textbf{Nombre} & \textbf{Definición} & \textbf{Referencia} \\
-    \midrule
-    NDVI & $\displaystyle \left( \frac{p_{NIR} - p_{R}}{p_{NIR} + p_{R}} \right) + p_{R}$ & \citep{Xue2017} \\      
-    EVI &  $\displaystyle  2.5 \times \frac{(P_n - P_r)}{P_n + C_1 P_r - C_2 P_b + L}$ &  \citep{Xue2017} \\
-    ARVI & $\displaystyle  \frac{(NIR - RB)}{(NIR + RB)}$ & \citep{Xue2017} \\
-    RDVI &  $\displaystyle \frac{(\rho_{NIR} - \rho_{red})}{(\rho_{NIR} + \rho_{red})^{1/2}}$ & \citep{vescovo2012} \\
-    GNDVI & $\displaystyle \frac{(NIR - Green)}{(NIR + Green)}$ & \citep{gndvi} \\
-    SIPI  & $\frac{(NIR - Blue)}{(NIR - Red)}$ & \citep{vi}\\
-    NDRE &  $\frac{(NIR - RedEdge)}{(NIR + RedEdge)}$ & \citep{ndre} \\
-	LCI &  $\frac{(NIR - RedEdge1)}{(NIR + RedEdge2)}$ & \citep{nata2021} \\ 
-    \bottomrule
-  \end{tabular}
-  \label{tab:tab-indices}
-\end{table}
